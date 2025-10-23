@@ -1,0 +1,64 @@
+ {% extends "base.html" %}
+
+{% block content %}
+<div class="card">
+    <h2 style="color: #2c3e50; margin-bottom: 25px; text-align: center;">Registrar Consumo de Recursos</h2>
+    
+    <form method="post" enctype="multipart/form-data" id="consumoForm">
+        {% csrf_token %}
+        
+        <div class="form-group">
+            <label class="form-label">Seleccionar Archivo XML de Consumo</label>
+            <input type="file" name="archivo_xml" accept=".xml" class="form-control" required 
+                   style="padding: 12px; border: 2px dashed #e74c3c;">
+        </div>
+        
+        <div style="text-align: center;">
+            <button type="submit" class="btn" style="background: linear-gradient(135deg, #e74c3c, #c0392b);">
+                ⚡ Procesar Consumo
+            </button>
+        </div>
+    </form>
+</div>
+
+<div class="card">
+    <h3 style="color: #2c3e50; margin-bottom: 20px;">Formato de Consumo</h3>
+    <p>El archivo XML debe contener los consumos de instancias con:</p>
+    <ul style="margin: 15px 0; padding-left: 20px; color: #555;">
+        <li>NIT del cliente</li>
+        <li>ID de la instancia</li>
+        <li>Tiempo consumido en horas</li>
+        <li>Fecha y hora del consumo</li>
+    </ul>
+</div>
+
+<div id="result" class="result-box"></div>
+
+<script>
+    document.getElementById('consumoForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const formData = new FormData(this);
+        
+        fetch('{% url "consumo" %}', {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                showResult(`Error: ${data.error}`, false);
+            } else {
+                let message = `Consumo procesado exitosamente<br><br>`;
+                message += `Consumos procesados: ${data.consumos_procesados || 0}`;
+                showResult(message, true);
+            }
+        })
+        .catch(error => {
+            showResult(`Error de conexión: ${error}`, false);
+        });
+    });
+</script>
+{% endblock %}

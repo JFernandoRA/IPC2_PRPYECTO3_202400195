@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="card">
+    <h2 style="color: #2c3e50; margin-bottom: 25px; text-align: center;">Generar Facturación</h2>
+    
+    <form method="post" id="facturacionForm">
+        {% csrf_token %}
+        
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+            <div class="form-group">
+                <label class="form-label">Fecha de Inicio</label>
+                <input type="date" name="fecha_inicio" class="form-control" required>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Fecha de Fin</label>
+                <input type="date" name="fecha_fin" class="form-control" required>
+            </div>
+        </div>
+        
+        <div style="text-align: center; margin-top: 30px;">
+            <button type="submit" class="btn" style="background: linear-gradient(135deg, #9b59b6, #8e44ad);">
+                Generar Facturas
+            </button>
+        </div>
+    </form>
+</div>
+
+<div class="card">
+    <h3 style="color: #2c3e50; margin-bottom: 20px;">Proceso de Facturación</h3>
+    <p>El sistema calculará automáticamente:</p>
+    <ul style="margin: 15px 0; padding-left: 20px; color: #555;">
+        <li>Consumos no facturados en el período</li>
+        <li>Costos por recursos utilizados</li>
+        <li>Generación de facturas individuales por cliente</li>
+        <li>Números de factura únicos</li>
+    </ul>
+</div>
+
+<div id="result" class="result-box"></div>
+
+<script>
+document.getElementById('facturacionForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const formData = new FormData(this);
+    
+    const jsonData = {
+        'fecha_inicio': formData.get('fecha_inicio'),
+        'fecha_fin': formData.get('fecha_fin')
+    };
+    
+    fetch('{% url "facturacion" %}', {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': getCookie('csrftoken'),
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(jsonData)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.error) {
+            showResult('Error: ' + data.error, false);
+        } else {
+            let message = 'Facturación generada exitosamente<br><br>';
+            message += 'Facturas generadas: ' + (data.facturas_generadas || 0) + '<br>';
+            
+            if (data.detalles && data.detalles.length > 0) {
+                message += '<br>Detalles:<br>';
+                data.detalles.forEach(factura => {
+                    message += '• Factura ' + factura.numero_factura + ': Q' + factura.monto_total + '<br>';
+                });
+            }
+            
+            showResult(message, true);
+        }
+    })
+    .catch(error => {
+        showResult('Error de conexión: ' + error, false);
+    });
+});
+
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+</script>
+{% endblock %}

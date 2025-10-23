@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<listadoConsumos>
+  <consumo nitCliente="12345-6" idInstancia="1">
+    <tiempo>15.25</tiempo>
+    <fechahora>23/10/2025 14:00</fechahora>
+  </consumo>
+  <consumo nitCliente="12345-6" idInstancia="2">
+    <tiempo>32.75</tiempo>
+    <fechahora>23/10/2025 14:00</fechahora>
+  </consumo>
+  <consumo nitCliente="67890-1" idInstancia="3">
+    <tiempo>8.5</tiempo>
+    <fechahora>23/10/2025 14:00</fechahora>
+  </consumo>
+  <consumo nitCliente="12345-6" idInstancia="1">
+    <tiempo>12.0</tiempo>
+    <fechahora>24/10/2025 09:00</fechahora>
+  </consumo>
+</listadoConsumos>

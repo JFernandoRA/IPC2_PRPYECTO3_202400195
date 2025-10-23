@@ -1,0 +1,117 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="card">
+    <h2 style="color: #2c3e50; margin-bottom: 25px; text-align: center;">Sistema de Gestión Cloud</h2>
+    
+    <div style="text-align: center; margin-bottom: 30px;">
+        <p style="font-size: 1.2em; color: #555; line-height: 1.6;">
+            Sistema integral de facturación y gestión de recursos en la nube
+        </p>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-top: 40px;">
+        <div class="card" style="text-align: center; background: linear-gradient(135deg, #3498db, #2980b9); color: white;">
+            <h3>Configuración</h3>
+            <p>Gestiona recursos, categorías y configuraciones</p>
+            <a href="{% url 'configuracion' %}" class="nav-item" style="display: inline-block; margin-top: 15px;">
+                Acceder
+            </a>
+        </div>
+
+        <div class="card" style="text-align: center; background: linear-gradient(135deg, #2ecc71, #27ae60); color: white;">
+            <h3>Consumo</h3>
+            <p>Registra consumo de recursos</p>
+            <a href="{% url 'consumo' %}" class="nav-item" style="display: inline-block; margin-top: 15px;">
+                Acceder
+            </a>
+        </div>
+
+        <div class="card" style="text-align: center; background: linear-gradient(135deg, #9b59b6, #8e44ad); color: white;">
+            <h3>Facturación</h3>
+            <p>Genera facturas automáticas</p>
+            <a href="{% url 'facturacion' %}" class="nav-item" style="display: inline-block; margin-top: 15px;">
+                Acceder
+            </a>
+        </div>
+
+        <div class="card" style="text-align: center; background: linear-gradient(135deg, #e74c3c, #c0392b); color: white;">
+            <h3>Reportes</h3>
+            <p>Genera reportes detallados</p>
+            <a href="{% url 'reportes' %}" class="nav-item" style="display: inline-block; margin-top: 15px;">
+                Acceder
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <h3 style="color: #2c3e50; margin-bottom: 20px;">Resumen del Sistema</h3>
+    
+    <div class="stats-grid">
+        <div class="stat-card" style="background: linear-gradient(135deg, #3498db, #2980b9);">
+            <div class="stat-number" id="totalRecursos">0</div>
+            <div class="stat-label">Recursos Configurados</div>
+        </div>
+        <div class="stat-card" style="background: linear-gradient(135deg, #2ecc71, #27ae60);">
+            <div class="stat-number" id="totalClientes">0</div>
+            <div class="stat-label">Clientes Activos</div>
+        </div>
+        <div class="stat-card" style="background: linear-gradient(135deg, #9b59b6, #8e44ad);">
+            <div class="stat-number" id="totalInstancias">0</div>
+            <div class="stat-label">Instancias Activas</div>
+        </div>
+        <div class="stat-card" style="background: linear-gradient(135deg, #e74c3c, #c0392b);">
+            <div class="stat-number" id="totalFacturas">0</div>
+            <div class="stat-label">Facturas Generadas</div>
+        </div>
+    </div>
+</div>
+
+<script>
+function cargarEstadisticasReales() {
+    fetch('{% url "consultar_datos" %}?tipo=configuraciones')
+    .then(response => response.json())
+    .then(data => {
+        let recursos = 0;
+        let clientes = 0;
+        let instancias = 0;
+        
+        if (data.datos && data.datos.length > 0) {
+            data.datos.forEach(item => {
+                if (item.tipo === 'recurso') {
+                    recursos++;
+                } else if (item.tipo === 'cliente') {
+                    clientes++;
+                    if (item.instancias) {
+                        instancias += item.instancias.length;
+                    }
+                }
+            });
+        }
+        
+        document.getElementById('totalRecursos').textContent = recursos;
+        document.getElementById('totalClientes').textContent = clientes;
+        document.getElementById('totalInstancias').textContent = instancias;
+    })
+    .catch(error => {
+        console.error('Error cargando recursos:', error);
+    });
+
+    fetch('{% url "consultar_datos" %}?tipo=facturas')
+    .then(response => response.json())
+    .then(data => {
+        let facturas = 0;
+        if (data.datos && data.datos.length > 0) {
+            facturas = data.datos.length;
+        }
+        document.getElementById('totalFacturas').textContent = facturas;
+    })
+    .catch(error => {
+        console.error('Error cargando facturas:', error);
+    });
+}
+
+document.addEventListener('DOMContentLoaded', cargarEstadisticasReales);
+</script>
+{% endblock %}

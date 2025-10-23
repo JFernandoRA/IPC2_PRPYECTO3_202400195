@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="card">
+    <h2 style="color: #2c3e50; margin-bottom: 25px; text-align: center;">Ayuda del Sistema</h2>
+    
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
+        <div class="card" style="background: linear-gradient(135deg, #f8f9fa, #e9ecef);">
+            <h3 style="color: #2c3e50; margin-bottom: 20px; text-align: center;">Información del Estudiante</h3>
+            
+            <div style="text-align: center; padding: 20px;">
+                <div style="font-size: 3em; margin-bottom: 15px;">👨‍💻</div>
+                <h4 style="color: #3498db; margin-bottom: 10px;">Jose Fernando Ramirez Ambrocio</h4>
+                <p style="color: #555; font-size: 1.1em; margin-bottom: 5px;">Carnet: 202400195</p>
+                <p style="color: #777; margin-bottom: 15px;">Introducción a la Programación y Computación 2</p>
+                <p style="color: #777;">Proyecto 3 - Sistema de Facturación en la Nube</p>
+            </div>
+        </div>
+
+        <div class="card" style="background: linear-gradient(135deg, #f8f9fa, #e9ecef);">
+            <h3 style="color: #2c3e50; margin-bottom: 20px; text-align: center;">Documentación del Programa</h3>
+            
+            <div style="padding: 15px;">
+                <h4 style="color: #2c3e50; margin-bottom: 15px;">Funcionalidades Principales:</h4>
+                <ul style="color: #555; line-height: 1.6; margin-bottom: 20px;">
+                    <li><strong>Configuración:</strong> Carga archivos XML con recursos, categorías y clientes</li>
+                    <li><strong>Consumo:</strong> Registra tiempos de uso de instancias</li>
+                    <li><strong>Facturación:</strong> Genera facturas por período</li>
+                    <li><strong>Reportes:</strong> Crea PDFs con detalles y análisis</li>
+                    <li><strong>Operaciones:</strong> Consulta y gestiona datos del sistema</li>
+                </ul>
+                
+                <h4 style="color: #2c3e50; margin-bottom: 15px;">Tecnologías Utilizadas:</h4>
+                <ul style="color: #555; line-height: 1.6;">
+                    <li>Backend: Flask con Python</li>
+                    <li>Frontend: Django con HTML/CSS/JavaScript</li>
+                    <li>Base de datos: Archivos XML</li>
+                    <li>Reportes: ReportLab para PDF</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <h3 style="color: #2c3e50; margin-bottom: 20px;">Estructura del Proyecto</h3>
+    
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+        <div>
+            <h4 style="color: #3498db; margin-bottom: 15px;">Backend (Flask)</h4>
+            <ul style="color: #555; line-height: 1.6;">
+                <li>API REST en puerto 5000</li>
+                <li>Procesamiento de XML</li>
+                <li>Lógica de facturación</li>
+                <li>Generación de reportes PDF</li>
+                <li>Almacenamiento en archivos XML</li>
+            </ul>
+        </div>
+        
+        <div>
+            <h4 style="color: #2ecc71; margin-bottom: 15px;">Frontend (Django)</h4>
+            <ul style="color: #555; line-height: 1.6;">
+                <li>Interfaz web en puerto 8000</li>
+                <li>Subida de archivos XML</li>
+                <li>Visualización de datos</li>
+                <li>Navegación entre módulos</li>
+                <li>Comunicación con API</li>
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}

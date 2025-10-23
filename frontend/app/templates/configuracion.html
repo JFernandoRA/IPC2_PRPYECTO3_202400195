@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="card">
+    <h2 style="color: #2c3e50; margin-bottom: 25px; text-align: center;">Cargar Configuración del Sistema</h2>
+    
+    <form method="post" enctype="multipart/form-data" id="configForm">
+        {% csrf_token %}
+        
+        <div class="form-group">
+            <label class="form-label">Seleccionar Archivo XML de Configuración</label>
+            <input type="file" name="archivo_xml" accept=".xml" class="form-control" required 
+                   style="padding: 12px; border: 2px dashed #3498db;">
+        </div>
+        
+        <div style="text-align: center;">
+            <button type="submit" class="btn" style="padding: 15px 40px;">
+                Cargar Configuración
+            </button>
+        </div>
+    </form>
+</div>
+
+<div class="card">
+    <h3 style="color: #2c3e50; margin-bottom: 20px;">Información del Archivo XML</h3>
+    <p>El archivo debe contener la estructura XML con:</p>
+    <ul style="margin: 15px 0; padding-left: 20px; color: #555;">
+        <li>Lista de recursos disponibles</li>
+        <li>Categorías de configuraciones</li>
+        <li>Configuraciones específicas</li>
+        <li>Clientes registrados</li>
+        <li>Instancias de clientes</li>
+    </ul>
+</div>
+
+<div id="result" class="result-box"></div>
+
+<script>
+    document.getElementById('configForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const formData = new FormData(this);
+        
+        fetch('{% url "configuracion" %}', {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                showResult(`Error: ${data.error}`, false);
+            } else {
+                let message = `Configuración procesada exitosamente<br><br>`;
+                message += `Resultados:<br>`;
+                message += `• Recursos creados: ${data.recursos_creados || 0}<br>`;
+                message += `• Categorías creadas: ${data.categorias_creadas || 0}<br>`;
+                message += `• Clientes creados: ${data.clientes_creados || 0}<br>`;
+                message += `• Instancias creadas: ${data.instancias_creadas || 0}`;
+                showResult(message, true);
+            }
+        })
+        .catch(error => {
+            showResult(`Error de conexión: ${error}`, false);
+        });
+    });
+</script>
+{% endblock %}

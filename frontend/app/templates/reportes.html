@@ -1,0 +1,196 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-number" id="totalFacturas">0</div>
+        <div class="stat-label">Facturas Generadas</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-number" id="totalClientes">0</div>
+        <div class="stat-label">Clientes Activos</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-number" id="totalIngresos">Q0</div>
+        <div class="stat-label">Ingresos Totales</div>
+    </div>
+</div>
+
+<div class="card">
+    <h2 style="color: #2c3e50; margin-bottom: 25px; text-align: center;">Generar Reportes en PDF</h2>
+    
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
+        <!-- Reporte de Detalle de Factura -->
+        <div class="card" style="background: linear-gradient(135deg, #f8f9fa, #e9ecef);">
+            <h3 style="color: #2c3e50; margin-bottom: 20px; text-align: center;">Detalle de Factura</h3>
+            
+            <form method="post" id="reporteFacturaForm">
+                {% csrf_token %}
+                <input type="hidden" name="tipo_reporte" value="factura">
+                
+                <div class="form-group">
+                    <label class="form-label">Número de Factura</label>
+                    <input type="text" name="numero_factura" class="form-control" placeholder="Ej: FACT-20241025123045" required>
+                </div>
+                
+                <div style="text-align: center;">
+                    <button type="submit" class="btn" style="background: linear-gradient(135deg, #3498db, #2980b9);">
+                        Generar Reporte
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Reporte de Análisis de Ventas -->
+        <div class="card" style="background: linear-gradient(135deg, #f8f9fa, #e9ecef);">
+            <h3 style="color: #2c3e50; margin-bottom: 20px; text-align: center;">Análisis de Ventas</h3>
+            
+            <form method="post" id="reporteVentasForm">
+                {% csrf_token %}
+                <input type="hidden" name="tipo_reporte" value="ventas">
+                
+                <div class="form-group">
+                    <label class="form-label">Tipo de Análisis</label>
+                    <select name="tipo_analisis" class="form-control" required>
+                        <option value="">Seleccionar tipo...</option>
+                        <option value="categorias">Por Categorías</option>
+                        <option value="recursos">Por Recursos</option>
+                    </select>
+                </div>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                    <div class="form-group">
+                        <label class="form-label">Fecha Inicio</label>
+                        <input type="date" name="fecha_inicio" class="form-control" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Fecha Fin</label>
+                        <input type="date" name="fecha_fin" class="form-control" required>
+                    </div>
+                </div>
+                
+                <div style="text-align: center;">
+                    <button type="submit" class="btn" style="background: linear-gradient(135deg, #2ecc71, #27ae60);">
+                        Generar Análisis
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <h3 style="color: #2c3e50; margin-bottom: 20px;">Información de Reportes</h3>
+    
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+        <div>
+            <h4 style="color: #3498db; margin-bottom: 15px;">Detalle de Factura</h4>
+            <ul style="color: #555; line-height: 1.6;">
+                <li>Información completa de la factura</li>
+                <li>Detalle de instancias facturadas</li>
+                <li>Tiempos de consumo</li>
+                <li>Desglose de costos por recurso</li>
+                <li>Monto total y desgloses</li>
+            </ul>
+        </div>
+        
+        <div>
+            <h4 style="color: #2ecc71; margin-bottom: 15px;">Análisis de Ventas</h4>
+            <ul style="color: #555; line-height: 1.6;">
+                <li>Ingresos por categorías de servicio</li>
+                <li>Rendimiento de configuraciones</li>
+                <li>Análisis de recursos más rentables</li>
+                <li>Tendencias de consumo</li>
+                <li>Métricas de rentabilidad</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<div id="result" class="result-box"></div>
+
+<script>
+    // Cargar estadísticas al iniciar
+    function cargarEstadisticas() {
+        // Simular datos de estadísticas (en un sistema real harías una petición al backend)
+        document.getElementById('totalFacturas').textContent = '12';
+        document.getElementById('totalClientes').textContent = '8';
+        document.getElementById('totalIngresos').textContent = 'Q15,240.50';
+    }
+
+    // Formulario de Reporte de Factura
+    document.getElementById('reporteFacturaForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const formData = new FormData(this);
+        
+        showResult('Generando reporte de factura...', true);
+        
+        fetch('{% url "reportes" %}', {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                showResult(`Error: ${data.error}`, false);
+            } else if (data.pdf_path) {
+                showResult(`Reporte generado exitosamente<br><br>
+                           Archivo: ${data.pdf_path}<br>
+                           <button onclick="descargarPDF('${data.pdf_path}')" class="btn" style="margin-top: 10px;">
+                               ⬇Descargar PDF
+                           </button>`, true);
+            } else {
+                showResult('Reporte generado exitosamente', true);
+            }
+        })
+        .catch(error => {
+            showResult(`Error de conexión: ${error}`, false);
+        });
+    });
+
+    // Formulario de Análisis de Ventas
+    document.getElementById('reporteVentasForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const formData = new FormData(this);
+        
+        showResult('Generando análisis de ventas...', true);
+        
+        fetch('{% url "reportes" %}', {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                showResult(`Error: ${data.error}`, false);
+            } else if (data.pdf_path) {
+                showResult(`Análisis generado exitosamente<br><br>
+                           Archivo: ${data.pdf_path}<br>
+                           <button onclick="descargarPDF('${data.pdf_path}')" class="btn" style="margin-top: 10px;">
+                               Descargar PDF
+                           </button>`, true);
+            } else {
+                showResult('Análisis generado exitosamente', true);
+            }
+        })
+        .catch(error => {
+            showResult(`Error de conexión: ${error}`, false);
+        });
+    });
+
+    // Función para descargar PDF
+    function descargarPDF(pdfPath) {
+        window.open(pdfPath, '_blank');
+    }
+
+    // Inicializar estadísticas cuando carga la página
+    document.addEventListener('DOMContentLoaded', cargarEstadisticas);
+</script>
+{% endblock %}

@@ -1,0 +1,141 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="card">
+    <h2 style="color: #2c3e50; margin-bottom: 25px; text-align: center;">Operaciones del Sistema</h2>
+    
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+        <div class="card" style="text-align: center; background: linear-gradient(135deg, #e74c3c, #c0392b); color: white;">
+            <h3>Inicializar Sistema</h3>
+            <p>Eliminar todos los datos</p>
+            <button onclick="inicializarSistema()" class="btn" style="background: rgba(255,255,255,0.2); margin-top: 15px;">
+                Ejecutar
+            </button>
+        </div>
+
+        <div class="card" style="text-align: center; background: linear-gradient(135deg, #3498db, #2980b9); color: white;">
+            <h3>Consultar Datos</h3>
+            <p>Ver información del sistema</p>
+            <button onclick="mostrarConsultas()" class="btn" style="background: rgba(255,255,255,0.2); margin-top: 15px;">
+                Consultar
+            </button>
+        </div>
+
+        <div class="card" style="text-align: center; background: linear-gradient(135deg, #2ecc71, #27ae60); color: white;">
+            <h3>Crear Datos</h3>
+            <p>Agregar nuevos elementos</p>
+            <button onclick="mostrarCreacion()" class="btn" style="background: rgba(255,255,255,0.2); margin-top: 15px;">
+                Crear
+            </button>
+        </div>
+
+        <div class="card" style="text-align: center; background: linear-gradient(135deg, #9b59b6, #8e44ad); color: white;">
+            <h3>Facturación</h3>
+            <p>Generar facturas</p>
+            <a href="{% url 'facturacion' %}" class="btn" style="background: rgba(255,255,255,0.2); margin-top: 15px; display: inline-block;">
+                Facturar
+            </a>
+        </div>
+    </div>
+</div>
+
+<div id="consultasSection" style="display: none;">
+    <div class="card">
+        <h3>Consultar Datos</h3>
+        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; margin-bottom: 20px;">
+            <button onclick="consultarDatos('recursos')" class="btn">Recursos</button>
+            <button onclick="consultarDatos('categorias')" class="btn">Categorías</button>
+            <button onclick="consultarDatos('clientes')" class="btn">Clientes</button>
+        </div>
+        <div id="resultadoConsulta"></div>
+    </div>
+</div>
+
+<div id="creacionSection" style="display: none;">
+    <div class="card">
+        <h3>Crear Nuevos Datos</h3>
+        <form id="formCrearRecurso">
+            <h4>Nuevo Recurso</h4>
+            <input type="text" name="nombre" placeholder="Nombre" class="form-control" required>
+            <input type="text" name="abreviatura" placeholder="Abreviatura" class="form-control" required>
+            <input type="text" name="metrica" placeholder="Métrica" class="form-control" required>
+            <select name="tipo" class="form-control" required>
+                <option value="Hardware">Hardware</option>
+                <option value="Software">Software</option>
+            </select>
+            <input type="number" name="valor" placeholder="Valor por hora" step="0.01" class="form-control" required>
+            <button type="submit" class="btn">Crear Recurso</button>
+        </form>
+    </div>
+</div>
+
+<div id="result" class="result-box"></div>
+
+<script>
+function inicializarSistema() {
+    fetch('{% url "reset_sistema" %}', {
+        method: 'POST',
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest',
+            'Content-Type': 'application/json',
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        showResult('Sistema inicializado correctamente', true);
+    })
+    .catch(error => {
+        showResult('Error: ' + error, false);
+    });
+}
+
+function mostrarConsultas() {
+    document.getElementById('consultasSection').style.display = 'block';
+    document.getElementById('creacionSection').style.display = 'none';
+}
+
+function mostrarCreacion() {
+    document.getElementById('creacionSection').style.display = 'block';
+    document.getElementById('consultasSection').style.display = 'none';
+}
+
+function consultarDatos(tipo) {
+    fetch(`{% url 'consultar_datos' %}?tipo=${tipo}`)
+    .then(response => response.json())
+    .then(data => {
+        let html = '<h4>Resultados:</h4>';
+        if (data.datos && data.datos.length > 0) {
+            html += '<table style="width: 100%; border-collapse: collapse;">';
+            html += '<tr><th style="border: 1px solid #ddd; padding: 8px; background: #f2f2f2;">ID</th><th style="border: 1px solid #ddd; padding: 8px; background: #f2f2f2;">Nombre</th></tr>';
+            data.datos.forEach(item => {
+                html += `<tr><td style="border: 1px solid #ddd; padding: 8px;">${item.id || item.nit}</td><td style="border: 1px solid #ddd; padding: 8px;">${item.nombre}</td></tr>`;
+            });
+            html += '</table>';
+        } else {
+            html += '<p>No hay datos</p>';
+        }
+        document.getElementById('resultadoConsulta').innerHTML = html;
+    })
+    .catch(error => {
+        document.getElementById('resultadoConsulta').innerHTML = 'Error: ' + error;
+    });
+}
+
+document.getElementById('formCrearRecurso').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const formData = new FormData(this);
+    
+    fetch('{% url "configuracion" %}', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        showResult('Recurso creado exitosamente', true);
+    })
+    .catch(error => {
+        showResult('Error: ' + error, false);
+    });
+});
+</script>
+{% endblock %}

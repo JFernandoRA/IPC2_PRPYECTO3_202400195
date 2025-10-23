@@ -1,0 +1,90 @@
+<?xml version='1.0' encoding='utf-8'?>
+<facturas>
+  <factura numero="FACT-20251023151331-1234">
+    <nitCliente>12345-6</nitCliente>
+    <fechaFactura />
+    <montoTotal>2885.1</montoTotal>
+    <detalles>
+      <detalle>
+        <idInstancia>1</idInstancia>
+        <tiempoTotal>27.25</tiempoTotal>
+        <monto>828.4</monto>
+      </detalle>
+      <detalle>
+        <idInstancia>2</idInstancia>
+        <tiempoTotal>32.75</tiempoTotal>
+        <monto>2056.7</monto>
+      </detalle>
+    </detalles>
+  </factura>
+  <factura numero="FACT-20251023151331-6789">
+    <nitCliente>67890-1</nitCliente>
+    <fechaFactura />
+    <montoTotal>129.2</montoTotal>
+    <detalles>
+      <detalle>
+        <idInstancia>3</idInstancia>
+        <tiempoTotal>8.5</tiempoTotal>
+        <monto>129.2</monto>
+      </detalle>
+    </detalles>
+  </factura>
+  <factura numero="FACT-20251023151520-1234">
+    <nitCliente>12345-6</nitCliente>
+    <fechaFactura />
+    <montoTotal>2885.1</montoTotal>
+    <detalles>
+      <detalle>
+        <idInstancia>1</idInstancia>
+        <tiempoTotal>27.25</tiempoTotal>
+        <monto>828.4</monto>
+      </detalle>
+      <detalle>
+        <idInstancia>2</idInstancia>
+        <tiempoTotal>32.75</tiempoTotal>
+        <monto>2056.7</monto>
+      </detalle>
+    </detalles>
+  </factura>
+  <factura numero="FACT-20251023151520-6789">
+    <nitCliente>67890-1</nitCliente>
+    <fechaFactura />
+    <montoTotal>129.2</montoTotal>
+    <detalles>
+      <detalle>
+        <idInstancia>3</idInstancia>
+        <tiempoTotal>8.5</tiempoTotal>
+        <monto>129.2</monto>
+      </detalle>
+    </detalles>
+  </factura>
+  <factura numero="FACT-20251023151912-1234">
+    <nitCliente>12345-6</nitCliente>
+    <fechaFactura>2025-10-31</fechaFactura>
+    <montoTotal>2885.1</montoTotal>
+    <detalles>
+      <detalle>
+        <idInstancia>1</idInstancia>
+        <tiempoTotal>27.25</tiempoTotal>
+        <monto>828.4</monto>
+      </detalle>
+      <detalle>
+        <idInstancia>2</idInstancia>
+        <tiempoTotal>32.75</tiempoTotal>
+        <monto>2056.7</monto>
+      </detalle>
+    </detalles>
+  </factura>
+  <factura numero="FACT-20251023151912-6789">
+    <nitCliente>67890-1</nitCliente>
+    <fechaFactura>2025-10-31</fechaFactura>
+    <montoTotal>129.2</montoTotal>
+    <detalles>
+      <detalle>
+        <idInstancia>3</idInstancia>
+        <tiempoTotal>8.5</tiempoTotal>
+        <monto>129.2</monto>
+      </detalle>
+    </detalles>
+  </factura>
+</facturas>
