@@ -1,12 +1,37 @@
 from database.xml_storage import guardar_factura, cargar_datos
 from database.models import Factura
 from datetime import datetime
-import time
 
 def generar_facturas(fecha_inicio, fecha_fin):
     try:
         print(f"=== INICIANDO FACTURACIÓN: {fecha_inicio} a {fecha_fin} ===")
-        print(f"Fecha fin recibida: '{fecha_fin}'")
+        print(f"Tipo fecha_inicio: {type(fecha_inicio)}, Tipo fecha_fin: {type(fecha_fin)}")
+        
+        # Convertir formato YYYY-MM-DD a DD/MM/YYYY si es necesario
+        if fecha_inicio and '-' in str(fecha_inicio):
+            try:
+                fecha_obj = datetime.strptime(fecha_inicio, '%Y-%m-%d')
+                fecha_inicio = fecha_obj.strftime('%d/%m/%Y')
+                print(f"Fecha inicio convertida: {fecha_inicio}")
+            except Exception as e:
+                print(f"Error convirtiendo fecha inicio: {e}")
+        
+        if fecha_fin and '-' in str(fecha_fin):
+            try:
+                fecha_obj = datetime.strptime(fecha_fin, '%Y-%m-%d')
+                fecha_fin = fecha_obj.strftime('%d/%m/%Y')
+                print(f"Fecha fin convertida: {fecha_fin}")
+            except Exception as e:
+                print(f"Error convirtiendo fecha fin: {e}")
+        
+        # Si aún son None, usar fechas por defecto
+        if not fecha_inicio:
+            fecha_inicio = "01/10/2025"
+        if not fecha_fin:
+            fecha_fin = "31/10/2025"
+        
+        print(f"Fechas finales: {fecha_inicio} a {fecha_fin}")
+        
         facturas_generadas = []
         
         consumos = cargar_datos('consumos')

@@ -46,6 +46,8 @@
             <button onclick="consultarDatos('recursos')" class="btn">Recursos</button>
             <button onclick="consultarDatos('categorias')" class="btn">Categorías</button>
             <button onclick="consultarDatos('clientes')" class="btn">Clientes</button>
+            <button onclick="consultarDatos('consumos')" class="btn">Consumos</button>
+            <button onclick="consultarDatos('facturas')" class="btn">Facturas</button>
         </div>
         <div id="resultadoConsulta"></div>
     </div>
@@ -55,6 +57,7 @@
     <div class="card">
         <h3>Crear Nuevos Datos</h3>
         <form id="formCrearRecurso">
+            {% csrf_token %}
             <h4>Nuevo Recurso</h4>
             <input type="text" name="nombre" placeholder="Nombre" class="form-control" required>
             <input type="text" name="abreviatura" placeholder="Abreviatura" class="form-control" required>
@@ -76,13 +79,23 @@ function inicializarSistema() {
     fetch('{% url "reset_sistema" %}', {
         method: 'POST',
         headers: {
-            'X-Requested-With': 'XMLHttpRequest',
+            'X-CSRFToken': getCookie('csrftoken'),
             'Content-Type': 'application/json',
         }
     })
     .then(response => response.json())
     .then(data => {
-        showResult('Sistema inicializado correctamente', true);
+        if (data.error) {
+            showResult('Error: ' + data.error, false);
+        } else {
+            showResult('Sistema inicializado correctamente', true);
+            // Actualizar estadísticas después de 2 segundos
+            setTimeout(() => {
+                if (typeof cargarEstadisticasReales === 'function') {
+                    cargarEstadisticasReales();
+                }
+            }, 2000);
+        }
     })
     .catch(error => {
         showResult('Error: ' + error, false);
@@ -105,14 +118,35 @@ function consultarDatos(tipo) {
     .then(data => {
         let html = '<h4>Resultados:</h4>';
         if (data.datos && data.datos.length > 0) {
-            html += '<table style="width: 100%; border-collapse: collapse;">';
-            html += '<tr><th style="border: 1px solid #ddd; padding: 8px; background: #f2f2f2;">ID</th><th style="border: 1px solid #ddd; padding: 8px; background: #f2f2f2;">Nombre</th></tr>';
+            html += '<div style="overflow-x: auto;">';
+            html += '<table style="width: 100%; border-collapse: collapse; margin-top: 10px;">';
+            
+            // Crear encabezados dinámicamente basados en el primer elemento
+            const firstItem = data.datos[0];
+            html += '<tr>';
+            for (const key in firstItem) {
+                if (key !== 'tipo' && key !== 'configuraciones' && key !== 'instancias' && key !== 'detalles') {
+                    html += `<th style="border: 1px solid #ddd; padding: 8px; background: #f2f2f2;">${key}</th>`;
+                }
+            }
+            html += '</tr>';
+            
+            // Agregar datos
             data.datos.forEach(item => {
-                html += `<tr><td style="border: 1px solid #ddd; padding: 8px;">${item.id || item.nit}</td><td style="border: 1px solid #ddd; padding: 8px;">${item.nombre}</td></tr>`;
+                html += '<tr>';
+                for (const key in firstItem) {
+                    if (key !== 'tipo' && key !== 'configuraciones' && key !== 'instancias' && key !== 'detalles') {
+                        let value = item[key];
+                        if (value === null || value === undefined) value = '';
+                        html += `<td style="border: 1px solid #ddd; padding: 8px;">${value}</td>`;
+                    }
+                }
+                html += '</tr>';
             });
             html += '</table>';
+            html += '</div>';
         } else {
-            html += '<p>No hay datos</p>';
+            html += '<p>No hay datos disponibles</p>';
         }
         document.getElementById('resultadoConsulta').innerHTML = html;
     })
@@ -127,15 +161,39 @@ document.getElementById('formCrearRecurso').addEventListener('submit', function(
     
     fetch('{% url "configuracion" %}', {
         method: 'POST',
-        body: formData
+        body: formData,
+        headers: {
+            'X-CSRFToken': getCookie('csrftoken'),
+        }
     })
     .then(response => response.json())
     .then(data => {
-        showResult('Recurso creado exitosamente', true);
+        if (data.error) {
+            showResult('Error: ' + data.error, false);
+        } else {
+            showResult('Recurso creado exitosamente', true);
+            this.reset();
+        }
     })
     .catch(error => {
         showResult('Error: ' + error, false);
     });
 });
+
+// Función para obtener el CSRF token
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
 </script>
 {% endblock %}

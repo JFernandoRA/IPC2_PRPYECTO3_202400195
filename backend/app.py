@@ -54,7 +54,12 @@ def reporte_ventas():
 
 @app.route('/consultar/<tipo>', methods=['GET'])
 def consultar_datos(tipo):
-    datos = cargar_datos(tipo)
+    from database.xml_storage import cargar_datos
+    if tipo in ['recursos', 'categorias', 'clientes']:
+        datos = cargar_datos('configuraciones', tipo)
+    else:
+        datos = cargar_datos(tipo)
+    
     return jsonify(datos)
 
 @app.route('/crear/recurso', methods=['POST'])

@@ -48,11 +48,14 @@ def consultar_datos(request):
     
     try:
         response = requests.get(f'{settings.BACKEND_URL}/consultar/{tipo}')
+        print(f"🔍 CONSULTA - Tipo: {tipo}, Status: {response.status_code}")
+        print(f"🔍 CONSULTA - Datos: {response.text[:500]}...")  # Primeros 500 chars
         datos = response.json()
         return JsonResponse({'datos': datos})
     except Exception as e:
+        print(f"🔍 CONSULTA - Error: {e}")
         return JsonResponse({'error': str(e)})
-
+    
 def reset_sistema(request):
     if request.method == 'POST':
         try:

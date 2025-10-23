@@ -196,22 +196,35 @@ def guardar_factura(factura):
     indent(root)
     tree.write(file_path, encoding='utf-8', xml_declaration=True)
 
-def cargar_datos(tipo):
+def cargar_datos(tipo, subtipo=None):
     ensure_data_dir()
-    file_path = os.path.join(DATA_DIR, f'{tipo}.xml')
+    
+    # Determinar qué archivo usar
+    if tipo in ['recursos', 'categorias', 'clientes'] or subtipo:
+        file_path = os.path.join(DATA_DIR, 'configuraciones.xml')
+    else:
+        file_path = os.path.join(DATA_DIR, f'{tipo}.xml')
+    
+    print(f"🔍 CARGAR_DATOS - Tipo: {tipo}, Subtipo: {subtipo}, Archivo: {file_path}")
     
     if not os.path.exists(file_path) or os.path.getsize(file_path) == 0:
+        print(f"🔍 CARGAR_DATOS - Archivo no existe o está vacío")
         return []
     
     try:
         tree = ET.parse(file_path)
         root = tree.getroot()
-    except:
+        print(f"🔍 CARGAR_DATOS - Root tag: {root.tag}")
+    except Exception as e:
+        print(f"🔍 CARGAR_DATOS - Error parseando: {e}")
         return []
     
     datos = []
     
-    if tipo == 'configuraciones':
+    # Si se especificó subtipo, usar ese
+    tipo_consulta = subtipo if subtipo else tipo
+    
+    if tipo_consulta == 'recursos':
         for elem in root.findall('recurso'):
             datos.append({
                 'tipo': 'recurso',
@@ -222,7 +235,8 @@ def cargar_datos(tipo):
                 'tipo_recurso': elem.find('tipo').text if elem.find('tipo') is not None else '',
                 'valor_x_hora': elem.find('valorXhora').text if elem.find('valorXhora') is not None else '0'
             })
-        
+    
+    elif tipo_consulta == 'categorias':
         for elem in root.findall('categoria'):
             configuraciones = []
             configs_elem = elem.find('configuraciones')
@@ -249,7 +263,8 @@ def cargar_datos(tipo):
                 'carga_trabajo': elem.find('cargaTrabajo').text if elem.find('cargaTrabajo') is not None else '',
                 'configuraciones': configuraciones
             })
-        
+    
+    elif tipo_consulta == 'clientes':
         for elem in root.findall('cliente'):
             instancias = []
             instancias_elem = elem.find('instancias')
@@ -302,7 +317,9 @@ def cargar_datos(tipo):
                 'detalles': detalles
             })
     
+    print(f"🔍 CARGAR_DATOS - {len(datos)} elementos encontrados para {tipo_consulta}")
     return datos
+
 
 # FUNCIÓN PARA MEJORAR FORMATO XML
 def indent(elem, level=0):
