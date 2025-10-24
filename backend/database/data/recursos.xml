@@ -42,4 +42,11 @@
     <tipo>Software</tipo>
     <valorXhora>0.8</valorXhora>
   </recurso>
+  <recurso id="7">
+    <nombre>Lapiz</nombre>
+    <abreviatura>e</abreviatura>
+    <metrica>Hertz</metrica>
+    <tipo>Hardware</tipo>
+    <valorXhora>4.0</valorXhora>
+  </recurso>
 </recursos>
