@@ -3,8 +3,12 @@ from services.config_service import procesar_configuracion
 from services.consumo_service import procesar_consumo
 from services.facturacion_service import generar_facturas
 from services.report_service import generar_reporte_factura, generar_analisis_ventas
-from database.xml_storage import reset_database, guardar_recurso, guardar_categoria, cargar_datos
-from database.models import Recurso, Categoria
+from database.xml_storage import (
+    reset_database, guardar_recurso, guardar_categoria, guardar_cliente, 
+    guardar_consumo, guardar_factura, cargar_recursos, cargar_categorias, 
+    cargar_clientes, cargar_consumos, cargar_facturas
+)
+from database.models import Recurso, Categoria, Cliente
 
 app = Flask(__name__)
 
@@ -54,54 +58,164 @@ def reporte_ventas():
 
 @app.route('/consultar/<tipo>', methods=['GET'])
 def consultar_datos(tipo):
-    from database.xml_storage import cargar_datos
-    if tipo in ['recursos', 'categorias', 'clientes']:
-        datos = cargar_datos('configuraciones', tipo)
+    """Consulta datos desde los archivos separados"""
+    if tipo == 'recursos':
+        datos = cargar_recursos()
+    elif tipo == 'categorias':
+        datos = cargar_categorias()
+    elif tipo == 'clientes':
+        datos = cargar_clientes()
+    elif tipo == 'consumos':
+        datos = cargar_consumos()
+    elif tipo == 'facturas':
+        datos = cargar_facturas()
     else:
-        datos = cargar_datos(tipo)
+        datos = []
     
+    print(f"🔍 CONSULTA - Tipo: {tipo}, Elementos encontrados: {len(datos)}")
     return jsonify(datos)
 
+# NUEVAS RUTAS PARA CREAR DATOS
 @app.route('/crear/recurso', methods=['POST'])
 def crear_recurso():
-    data = request.json
-    nuevo_recurso = Recurso(
-        id_recurso=generar_id_recurso(),
-        nombre=data.get('nombre'),
-        abreviatura=data.get('abreviatura'),
-        metrica=data.get('metrica'),
-        tipo=data.get('tipo'),
-        valor_x_hora=data.get('valor')
-    )
-    guardar_recurso(nuevo_recurso)
-    return jsonify({"mensaje": "Recurso creado exitosamente"})
+    try:
+        print("🔧 BACKEND - Creando recurso...")
+        data = request.json
+        print(f"🔧 BACKEND - Datos recibidos: {data}")
+        
+        if not data:
+            return jsonify({"error": "No se recibieron datos"}), 400
+        
+        # Generar ID único para el recurso
+        nuevo_id = generar_id_recurso()
+        
+        nuevo_recurso = Recurso(
+            id_recurso=nuevo_id,
+            nombre=data.get('nombre'),
+            abreviatura=data.get('abreviatura'),
+            metrica=data.get('metrica'),
+            tipo=data.get('tipo'),
+            valor_x_hora=float(data.get('valor'))
+        )
+        
+        print(f"🔧 BACKEND - Guardando recurso: {nuevo_recurso.nombre}")
+        guardar_recurso(nuevo_recurso)
+        
+        return jsonify({
+            "mensaje": "Recurso creado exitosamente",
+            "id": nuevo_id
+        })
+        
+    except Exception as e:
+        print(f"🔧 BACKEND - Error: {str(e)}")
+        return jsonify({"error": f"Error interno: {str(e)}"}), 500
 
 @app.route('/crear/categoria', methods=['POST'])
 def crear_categoria():
-    data = request.json
-    nueva_categoria = Categoria(
-        id_categoria=generar_id_categoria(),
-        nombre=data.get('nombre'),
-        descripcion=data.get('descripcion'),
-        carga_trabajo=data.get('carga_trabajo'),
-        configuraciones=[]
-    )
-    guardar_categoria(nueva_categoria)
-    return jsonify({"mensaje": "Categoría creada exitosamente"})
+    try:
+        print("🔧 BACKEND - Creando categoría...")
+        data = request.json
+        
+        nueva_categoria = Categoria(
+            id_categoria=generar_id_categoria(),
+            nombre=data.get('nombre'),
+            descripcion=data.get('descripcion'),
+            carga_trabajo=data.get('carga_trabajo'),
+            configuraciones=[]
+        )
+        
+        guardar_categoria(nueva_categoria)
+        return jsonify({"mensaje": "Categoría creada exitosamente"})
+        
+    except Exception as e:
+        return jsonify({"error": f"Error interno: {str(e)}"}), 500
 
+@app.route('/crear/cliente', methods=['POST'])
+def crear_cliente():
+    try:
+        print("🔧 BACKEND - Creando cliente...")
+        data = request.json
+        
+        # Validar NIT
+        from utils.validators import validar_nit
+        if not validar_nit(data.get('nit')):
+            return jsonify({"error": "NIT inválido"}), 400
+        
+        nuevo_cliente = Cliente(
+            nit=data.get('nit'),
+            nombre=data.get('nombre'),
+            usuario=data.get('usuario'),
+            clave=data.get('clave'),
+            direccion=data.get('direccion'),
+            correo=data.get('correo'),
+            instancias=[]
+        )
+        
+        guardar_cliente(nuevo_cliente)
+        return jsonify({"mensaje": "Cliente creado exitosamente"})
+        
+    except Exception as e:
+        return jsonify({"error": f"Error interno: {str(e)}"}), 500
+
+# FUNCIONES AUXILIARES PARA GENERAR IDs
 def generar_id_recurso():
-    datos = cargar_datos('configuraciones')
-    recursos = [d for d in datos if d['tipo'] == 'recurso']
-    if recursos:
-        return max([int(r['id']) for r in recursos]) + 1
-    return 1
+    try:
+        # Usar la nueva función de carga de recursos
+        recursos = cargar_recursos()
+        print(f"🔍 GENERAR_ID_RECURSO - Recursos encontrados: {len(recursos)}")
+        
+        if recursos:
+            ids = []
+            for r in recursos:
+                try:
+                    ids.append(int(r['id']))
+                    print(f"🔍 Recurso encontrado: ID {r['id']} - {r['nombre']}")
+                except (ValueError, KeyError) as e:
+                    print(f"⚠️  Error con ID del recurso: {r.get('id')} - {e}")
+            
+            if ids:
+                max_id = max(ids)
+                print(f"🔍 ID máximo encontrado: {max_id}")
+                nuevo_id = max_id + 1
+                print(f"🔍 Nuevo ID generado: {nuevo_id}")
+                return nuevo_id
+        
+        print("🔍 No hay recursos, usando ID: 1")
+        return 1
+        
+    except Exception as e:
+        print(f"🔴 ERROR en generar_id_recurso: {e}")
+        return 1
 
 def generar_id_categoria():
-    datos = cargar_datos('configuraciones')
-    categorias = [d for d in datos if d['tipo'] == 'categoria']
-    if categorias:
-        return max([int(c['id']) for c in categorias]) + 1
-    return 1
+    try:
+        # Usar la nueva función de carga de categorías
+        categorias = cargar_categorias()
+        print(f"🔍 GENERAR_ID_CATEGORIA - Categorías encontradas: {len(categorias)}")
+        
+        if categorias:
+            ids = []
+            for c in categorias:
+                try:
+                    ids.append(int(c['id']))
+                    print(f"🔍 Categoría encontrada: ID {c['id']} - {c['nombre']}")
+                except (ValueError, KeyError) as e:
+                    print(f"⚠️  Error con ID de categoría: {c.get('id')} - {e}")
+            
+            if ids:
+                max_id = max(ids)
+                print(f"🔍 ID máximo encontrado: {max_id}")
+                nuevo_id = max_id + 1
+                print(f"🔍 Nuevo ID generado: {nuevo_id}")
+                return nuevo_id
+        
+        print("🔍 No hay categorías, usando ID: 1")
+        return 1
+        
+    except Exception as e:
+        print(f"🔴 ERROR en generar_id_categoria: {e}")
+        return 1
+    
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)

@@ -1,4 +1,4 @@
-from database.xml_storage import guardar_factura, cargar_datos
+from database.xml_storage import guardar_factura, cargar_recursos, cargar_categorias, cargar_clientes, cargar_consumos
 from database.models import Factura
 from datetime import datetime
 
@@ -34,11 +34,16 @@ def generar_facturas(fecha_inicio, fecha_fin):
         
         facturas_generadas = []
         
-        consumos = cargar_datos('consumos')
-        configuraciones = cargar_datos('configuraciones')
+        # Usar las nuevas funciones de carga
+        consumos = cargar_consumos()
+        clientes = cargar_clientes()
+        categorias = cargar_categorias()
+        recursos = cargar_recursos()
         
         print(f"Consumos cargados: {len(consumos)}")
-        print(f"Configuraciones cargadas: {len(configuraciones)}")
+        print(f"Clientes cargados: {len(clientes)}")
+        print(f"Categorías cargadas: {len(categorias)}")
+        print(f"Recursos cargados: {len(recursos)}")
         
         # Agrupar consumos por cliente
         consumos_por_cliente = {}
@@ -67,7 +72,7 @@ def generar_facturas(fecha_inicio, fecha_fin):
             # Calcular costos por instancia
             for id_instancia, consumos_instancia in consumos_por_instancia.items():
                 tiempo_total = sum(float(consumo['tiempo']) for consumo in consumos_instancia)
-                costo_instancia = calcular_costo_instancia(id_instancia, tiempo_total, configuraciones)
+                costo_instancia = calcular_costo_instancia(id_instancia, tiempo_total, clientes, categorias, recursos)
                 total_factura += costo_instancia
                 
                 detalles_factura.append({
@@ -118,36 +123,42 @@ def generar_numero_factura(nit_cliente):
     nit_short = nit_cliente.replace('-', '')[:4]
     return f"FACT-{timestamp}-{nit_short}"
 
-def calcular_costo_instancia(id_instancia, tiempo_total, configuraciones):
+def calcular_costo_instancia(id_instancia, tiempo_total, clientes, categorias, recursos):
     try:
         costo_total = 0
         
+        print(f"    Calculando costo para instancia {id_instancia}")
+        
         # Buscar la instancia en los clientes
-        for config_data in configuraciones:
-            if config_data['tipo'] == 'cliente':
-                for instancia in config_data.get('instancias', []):
-                    if instancia['id'] == str(id_instancia):
-                        id_configuracion = instancia['idConfiguracion']
-                        print(f"    Configuración encontrada: {id_configuracion}")
-                        
-                        # Buscar la configuración en las categorías
-                        for cat_data in configuraciones:
-                            if cat_data['tipo'] == 'categoria':
-                                for config in cat_data.get('configuraciones', []):
-                                    if config['id'] == id_configuracion:
-                                        for recurso_id, cantidad in config.get('recursos', {}).items():
-                                            recurso_info = obtener_recurso_info(recurso_id, configuraciones)
-                                            if recurso_info:
-                                                costo_recurso = float(recurso_info['valor_x_hora']) * float(cantidad) * tiempo_total
-                                                costo_total += costo_recurso
-                                                print(f"      Recurso {recurso_id}: Q{costo_recurso:.2f}")
+        for cliente in clientes:
+            for instancia in cliente.get('instancias', []):
+                if instancia['id'] == str(id_instancia):
+                    id_configuracion = instancia['idConfiguracion']
+                    print(f"    Configuración encontrada: {id_configuracion}")
+                    
+                    # Buscar la configuración en las categorías
+                    for categoria in categorias:
+                        for config in categoria.get('configuraciones', []):
+                            if config['id'] == id_configuracion:
+                                print(f"    Configuración {id_configuracion} encontrada en categoría {categoria['nombre']}")
+                                
+                                # Calcular costo por cada recurso en la configuración
+                                for recurso_id, cantidad in config.get('recursos', {}).items():
+                                    recurso_info = obtener_recurso_info(recurso_id, recursos)
+                                    if recurso_info:
+                                        costo_recurso = float(recurso_info['valor_x_hora']) * float(cantidad) * tiempo_total
+                                        costo_total += costo_recurso
+                                        print(f"      Recurso {recurso_id}: {cantidad} unidades x {tiempo_total} horas x Q{recurso_info['valor_x_hora']}/hora = Q{costo_recurso:.2f}")
+                                    else:
+                                        print(f"      ⚠️ Recurso {recurso_id} no encontrado")
+        
         return round(costo_total, 2)
     except Exception as e:
         print(f"Error calculando costo: {e}")
         return 0
 
-def obtener_recurso_info(id_recurso, configuraciones):
-    for data in configuraciones:
-        if data['tipo'] == 'recurso' and data['id'] == id_recurso:
-            return data
+def obtener_recurso_info(id_recurso, recursos):
+    for recurso in recursos:
+        if recurso['id'] == id_recurso:
+            return recurso
     return None

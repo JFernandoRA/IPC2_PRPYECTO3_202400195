@@ -1,31 +1,31 @@
 <?xml version='1.0' encoding='utf-8'?>
 <facturas>
-  <factura numero="FACT-20251023172619-1234">
+  <factura numero="FACT-20251023203549-1234">
     <nitCliente>12345-6</nitCliente>
     <fechaFactura>31/10/2025</fechaFactura>
-    <montoTotal>2885.1</montoTotal>
+    <montoTotal>152.0</montoTotal>
     <detalles>
       <detalle>
         <idInstancia>1</idInstancia>
-        <tiempoTotal>27.25</tiempoTotal>
-        <monto>828.4</monto>
+        <tiempoTotal>5.0</tiempoTotal>
+        <monto>152.0</monto>
       </detalle>
       <detalle>
-        <idInstancia>2</idInstancia>
-        <tiempoTotal>32.75</tiempoTotal>
-        <monto>2056.7</monto>
+        <idInstancia>99</idInstancia>
+        <tiempoTotal>3.0</tiempoTotal>
+        <monto>0</monto>
       </detalle>
     </detalles>
   </factura>
-  <factura numero="FACT-20251023172619-6789">
+  <factura numero="FACT-20251023203549-6789">
     <nitCliente>67890-1</nitCliente>
     <fechaFactura>31/10/2025</fechaFactura>
-    <montoTotal>129.2</montoTotal>
+    <montoTotal>182.4</montoTotal>
     <detalles>
       <detalle>
         <idInstancia>3</idInstancia>
-        <tiempoTotal>8.5</tiempoTotal>
-        <monto>129.2</monto>
+        <tiempoTotal>12.0</tiempoTotal>
+        <monto>182.4</monto>
       </detalle>
     </detalles>
   </factura>

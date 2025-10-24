@@ -1,0 +1,45 @@
+<?xml version='1.0' encoding='utf-8'?>
+<recursos>
+  <recurso id="1">
+    <nombre>Núcleos CPU</nombre>
+    <abreviatura>CPU</abreviatura>
+    <metrica>unidades</metrica>
+    <tipo>Hardware</tipo>
+    <valorXhora>1.2</valorXhora>
+  </recurso>
+  <recurso id="2">
+    <nombre>Memoria RAM</nombre>
+    <abreviatura>RAM</abreviatura>
+    <metrica>GiB</metrica>
+    <tipo>Hardware</tipo>
+    <valorXhora>0.75</valorXhora>
+  </recurso>
+  <recurso id="3">
+    <nombre>Almacenamiento SSD</nombre>
+    <abreviatura>SSD</abreviatura>
+    <metrica>GB</metrica>
+    <tipo>Hardware</tipo>
+    <valorXhora>0.5</valorXhora>
+  </recurso>
+  <recurso id="4">
+    <nombre>Sistema Operativo Windows</nombre>
+    <abreviatura>WIN</abreviatura>
+    <metrica>unidades</metrica>
+    <tipo>Software</tipo>
+    <valorXhora>2.0</valorXhora>
+  </recurso>
+  <recurso id="5">
+    <nombre>Servicio de Monitorización</nombre>
+    <abreviatura>MON</abreviatura>
+    <metrica>unidades</metrica>
+    <tipo>Software</tipo>
+    <valorXhora>1.5</valorXhora>
+  </recurso>
+  <recurso id="6">
+    <nombre>Backup Automático</nombre>
+    <abreviatura>BKM</abreviatura>
+    <metrica>unidades</metrica>
+    <tipo>Software</tipo>
+    <valorXhora>0.8</valorXhora>
+  </recurso>
+</recursos>

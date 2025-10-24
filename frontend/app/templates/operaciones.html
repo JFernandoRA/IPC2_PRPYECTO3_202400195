@@ -39,6 +39,7 @@
     </div>
 </div>
 
+<!-- Sección de Consultas -->
 <div id="consultasSection" style="display: none;">
     <div class="card">
         <h3>Consultar Datos</h3>
@@ -53,29 +54,110 @@
     </div>
 </div>
 
+<!-- Sección de Creación de Datos -->
 <div id="creacionSection" style="display: none;">
     <div class="card">
         <h3>Crear Nuevos Datos</h3>
-        <form id="formCrearRecurso">
-            {% csrf_token %}
+        
+        <!-- Pestañas para diferentes tipos de datos -->
+        <div style="margin-bottom: 20px;">
+            <button onclick="mostrarFormulario('recurso')" class="btn" style="margin: 5px;">Nuevo Recurso</button>
+            <button onclick="mostrarFormulario('categoria')" class="btn" style="margin: 5px;">Nueva Categoría</button>
+            <button onclick="mostrarFormulario('cliente')" class="btn" style="margin: 5px;">Nuevo Cliente</button>
+        </div>
+        
+        <!-- Formulario para Recurso -->
+        <div id="formRecurso" class="formulario-creacion">
             <h4>Nuevo Recurso</h4>
-            <input type="text" name="nombre" placeholder="Nombre" class="form-control" required>
-            <input type="text" name="abreviatura" placeholder="Abreviatura" class="form-control" required>
-            <input type="text" name="metrica" placeholder="Métrica" class="form-control" required>
-            <select name="tipo" class="form-control" required>
-                <option value="Hardware">Hardware</option>
-                <option value="Software">Software</option>
-            </select>
-            <input type="number" name="valor" placeholder="Valor por hora" step="0.01" class="form-control" required>
-            <button type="submit" class="btn">Crear Recurso</button>
-        </form>
+            <form id="formCrearRecurso">
+                {% csrf_token %}
+                <div class="form-group">
+                    <input type="text" name="nombre" placeholder="Nombre del recurso" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <input type="text" name="abreviatura" placeholder="Abreviatura" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <input type="text" name="metrica" placeholder="Métrica (ej: GiB, unidades)" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <select name="tipo" class="form-control" required>
+                        <option value="">Seleccionar tipo...</option>
+                        <option value="Hardware">Hardware</option>
+                        <option value="Software">Software</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <input type="number" name="valor" placeholder="Valor por hora" step="0.01" class="form-control" required>
+                </div>
+                <button type="submit" class="btn">Crear Recurso</button>
+            </form>
+        </div>
+        
+        <!-- Formulario para Categoría -->
+        <div id="formCategoria" class="formulario-creacion" style="display: none;">
+            <h4>Nueva Categoría</h4>
+            <form id="formCrearCategoria">
+                {% csrf_token %}
+                <div class="form-group">
+                    <input type="text" name="nombre" placeholder="Nombre de la categoría" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <textarea name="descripcion" placeholder="Descripción" class="form-control" required></textarea>
+                </div>
+                <div class="form-group">
+                    <input type="text" name="carga_trabajo" placeholder="Carga de trabajo" class="form-control" required>
+                </div>
+                <button type="submit" class="btn">Crear Categoría</button>
+            </form>
+        </div>
+        
+        <!-- Formulario para Cliente -->
+        <div id="formCliente" class="formulario-creacion" style="display: none;">
+            <h4>Nuevo Cliente</h4>
+            <form id="formCrearCliente">
+                {% csrf_token %}
+                <div class="form-group">
+                    <input type="text" name="nit" placeholder="NIT (formato: 12345-6)" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <input type="text" name="nombre" placeholder="Nombre del cliente" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <input type="text" name="usuario" placeholder="Nombre de usuario" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <input type="password" name="clave" placeholder="Clave" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <input type="text" name="direccion" placeholder="Dirección" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <input type="email" name="correo" placeholder="Correo electrónico" class="form-control" required>
+                </div>
+                <button type="submit" class="btn">Crear Cliente</button>
+            </form>
+        </div>
     </div>
 </div>
 
 <div id="result" class="result-box"></div>
 
+<style>
+.formulario-creacion {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 15px;
+}
+</style>
+
 <script>
 function inicializarSistema() {
+    if (!confirm('¿Está seguro de que desea inicializar el sistema? Se perderán todos los datos.')) {
+        return;
+    }
+    
     fetch('{% url "reset_sistema" %}', {
         method: 'POST',
         headers: {
@@ -89,7 +171,6 @@ function inicializarSistema() {
             showResult('Error: ' + data.error, false);
         } else {
             showResult('Sistema inicializado correctamente', true);
-            // Actualizar estadísticas después de 2 segundos
             setTimeout(() => {
                 if (typeof cargarEstadisticasReales === 'function') {
                     cargarEstadisticasReales();
@@ -110,32 +191,66 @@ function mostrarConsultas() {
 function mostrarCreacion() {
     document.getElementById('creacionSection').style.display = 'block';
     document.getElementById('consultasSection').style.display = 'none';
+    // Mostrar el primer formulario por defecto
+    mostrarFormulario('recurso');
+}
+
+function mostrarFormulario(tipo) {
+    console.log("🟡 Mostrando formulario para:", tipo);
+    
+    // Ocultar todos los formularios
+    const formularios = document.querySelectorAll('.formulario-creacion');
+    formularios.forEach(form => {
+        form.style.display = 'none';
+    });
+    
+    // Mostrar el formulario seleccionado
+    const formularioId = 'form' + tipo.charAt(0).toUpperCase() + tipo.slice(1);
+    const formulario = document.getElementById(formularioId);
+    
+    if (formulario) {
+        formulario.style.display = 'block';
+        console.log("🟡 Formulario mostrado:", formularioId);
+    } else {
+        console.error("🔴 No se encontró el formulario:", formularioId);
+    }
 }
 
 function consultarDatos(tipo) {
+    console.log("🔍 CONSULTANDO DATOS - Tipo:", tipo);
+    
     fetch(`{% url 'consultar_datos' %}?tipo=${tipo}`)
     .then(response => response.json())
     .then(data => {
+        console.log("🔍 RESPUESTA BACKEND - Datos crudos:", data);
+        
         let html = '<h4>Resultados:</h4>';
         if (data.datos && data.datos.length > 0) {
-            html += '<div style="overflow-x: auto;">';
-            html += '<table style="width: 100%; border-collapse: collapse; margin-top: 10px;">';
+            console.log("🔍 DATOS ENCONTRADOS - Cantidad:", data.datos.length);
             
-            // Crear encabezados dinámicamente basados en el primer elemento
+            html += `<p>Total de elementos: ${data.datos.length}</p>`;
+            html += '<div style="overflow-x: auto;">';
+            html += '<table style="width: auto; min-width: 100%; border-collapse: collapse; margin-top: 10px; white-space: nowrap;">';
+            
             const firstItem = data.datos[0];
+            
+            // MOSTRAR TODAS LAS COLUMNAS - SOLO OCULTAR LAS COMPLEJAS
             html += '<tr>';
             for (const key in firstItem) {
-                if (key !== 'tipo' && key !== 'configuraciones' && key !== 'instancias' && key !== 'detalles') {
+                // Solo ocultar campos que son arrays/objetos complejos
+                if (key !== 'configuraciones' && key !== 'instancias' && key !== 'detalles') {
                     html += `<th style="border: 1px solid #ddd; padding: 8px; background: #f2f2f2;">${key}</th>`;
                 }
             }
             html += '</tr>';
             
-            // Agregar datos
-            data.datos.forEach(item => {
+            // MOSTRAR TODOS LOS DATOS
+            data.datos.forEach((item, index) => {
+                console.log(`🔍 ELEMENTO ${index}:`, item);
                 html += '<tr>';
                 for (const key in firstItem) {
-                    if (key !== 'tipo' && key !== 'configuraciones' && key !== 'instancias' && key !== 'detalles') {
+                    // Solo ocultar campos que son arrays/objetos complejos
+                    if (key !== 'configuraciones' && key !== 'instancias' && key !== 'detalles') {
                         let value = item[key];
                         if (value === null || value === undefined) value = '';
                         html += `<td style="border: 1px solid #ddd; padding: 8px;">${value}</td>`;
@@ -151,23 +266,48 @@ function consultarDatos(tipo) {
         document.getElementById('resultadoConsulta').innerHTML = html;
     })
     .catch(error => {
+        console.error("🔴 ERROR CONSULTA:", error);
         document.getElementById('resultadoConsulta').innerHTML = 'Error: ' + error;
     });
 }
 
+// Formulario para crear recurso
 document.getElementById('formCrearRecurso').addEventListener('submit', function(e) {
     e.preventDefault();
-    const formData = new FormData(this);
     
-    fetch('{% url "configuracion" %}', {
+    console.log("🟡 DEBUG - Iniciando envío de recurso");
+    
+    const data = {
+        'nombre': this.nombre.value,
+        'abreviatura': this.abreviatura.value,
+        'metrica': this.metrica.value,
+        'tipo': this.tipo.value,
+        'valor': parseFloat(this.valor.value)
+    };
+    
+    console.log("🟡 DEBUG - Datos a enviar:", data);
+    
+    fetch('{% url "crear_recurso" %}', {
         method: 'POST',
-        body: formData,
         headers: {
             'X-CSRFToken': getCookie('csrftoken'),
-        }
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data)
     })
-    .then(response => response.json())
+    .then(response => {
+        console.log("🟡 DEBUG - Response status:", response.status);
+        return response.text().then(text => {
+            console.log("🟡 DEBUG - Response text:", text);
+            try {
+                return JSON.parse(text);
+            } catch (e) {
+                throw new Error(`Respuesta no JSON: ${text}`);
+            }
+        });
+    })
     .then(data => {
+        console.log("🟡 DEBUG - Datos parseados:", data);
         if (data.error) {
             showResult('Error: ' + data.error, false);
         } else {
@@ -176,7 +316,107 @@ document.getElementById('formCrearRecurso').addEventListener('submit', function(
         }
     })
     .catch(error => {
-        showResult('Error: ' + error, false);
+        console.error("🔴 DEBUG - Error completo:", error);
+        showResult('Error: ' + error.message, false);
+    });
+});
+
+// Formulario para crear categoría
+document.getElementById('formCrearCategoria').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    console.log("🟡 DEBUG - Iniciando envío de categoría");
+    
+    const data = {
+        'nombre': this.nombre.value,
+        'descripcion': this.descripcion.value,
+        'carga_trabajo': this.carga_trabajo.value
+    };
+    
+    console.log("🟡 DEBUG - Datos a enviar:", data);
+    
+    fetch('{% url "crear_categoria" %}', {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': getCookie('csrftoken'),
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data)
+    })
+    .then(response => {
+        console.log("🟡 DEBUG - Response status:", response.status);
+        return response.text().then(text => {
+            console.log("🟡 DEBUG - Response text:", text);
+            try {
+                return JSON.parse(text);
+            } catch (e) {
+                throw new Error(`Respuesta no JSON: ${text}`);
+            }
+        });
+    })
+    .then(data => {
+        console.log("🟡 DEBUG - Datos parseados:", data);
+        if (data.error) {
+            showResult('Error: ' + data.error, false);
+        } else {
+            showResult('Categoría creada exitosamente', true);
+            this.reset();
+        }
+    })
+    .catch(error => {
+        console.error("🔴 DEBUG - Error completo:", error);
+        showResult('Error: ' + error.message, false);
+    });
+});
+
+// Formulario para crear cliente
+document.getElementById('formCrearCliente').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    console.log("🟡 DEBUG - Iniciando envío de cliente");
+    
+    const data = {
+        'nit': this.nit.value,
+        'nombre': this.nombre.value,
+        'usuario': this.usuario.value,
+        'clave': this.clave.value,
+        'direccion': this.direccion.value,
+        'correo': this.correo.value
+    };
+    
+    console.log("🟡 DEBUG - Datos a enviar:", data);
+    
+    fetch('{% url "crear_cliente" %}', {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': getCookie('csrftoken'),
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data)
+    })
+    .then(response => {
+        console.log("🟡 DEBUG - Response status:", response.status);
+        return response.text().then(text => {
+            console.log("🟡 DEBUG - Response text:", text);
+            try {
+                return JSON.parse(text);
+            } catch (e) {
+                throw new Error(`Respuesta no JSON: ${text}`);
+            }
+        });
+    })
+    .then(data => {
+        console.log("🟡 DEBUG - Datos parseados:", data);
+        if (data.error) {
+            showResult('Error: ' + data.error, false);
+        } else {
+            showResult('Cliente creado exitosamente', true);
+            this.reset();
+        }
+    })
+    .catch(error => {
+        console.error("🔴 DEBUG - Error completo:", error);
+        showResult('Error: ' + error.message, false);
     });
 });
 

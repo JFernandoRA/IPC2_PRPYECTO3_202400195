@@ -10,5 +10,11 @@ urlpatterns = [
     path('reset/', views.reset_sistema, name='reset_sistema'),
     path('facturacion/', views.facturacion, name='facturacion'),
     path('reportes/', views.reportes, name='reportes'),
-    path('ayuda/', views.ayuda, name='ayuda'),  
+    path('ayuda/', views.ayuda, name='ayuda'),
+    # NUEVAS RUTAS PARA CREAR DATOS
+    path('crear/recurso/', views.crear_recurso, name='crear_recurso'),
+    path('crear/categoria/', views.crear_categoria, name='crear_categoria'),
+    path('crear/cliente/', views.crear_cliente, name='crear_cliente'),
+    
+    
 ]

@@ -25,6 +25,82 @@ def configuracion(request):
     
     return render(request, 'configuracion.html')
 
+# Agregar estas funciones al views.py del frontend
+
+def crear_recurso(request):
+    if request.method == 'POST':
+        import json
+        try:
+            # Parsear el JSON del request body
+            data = json.loads(request.body)
+            
+            print(f"🎯 CREAR RECURSO - Datos recibidos: {data}")
+            
+            # Enviar al backend Flask
+            response = requests.post(
+                f'{settings.BACKEND_URL}/crear/recurso',
+                json=data,
+                headers={'Content-Type': 'application/json'}
+            )
+            
+            print(f"🎯 CREAR RECURSO - Respuesta backend: {response.status_code}")
+            
+            return JsonResponse(response.json())
+            
+        except Exception as e:
+            print(f"🎯 CREAR RECURSO - Error: {e}")
+            return JsonResponse({'error': str(e)})
+    
+    return JsonResponse({'error': 'Método no permitido'})
+
+def crear_categoria(request):
+    if request.method == 'POST':
+        import json
+        try:
+            data = json.loads(request.body)
+            
+            print(f"🎯 CREAR CATEGORIA - Datos recibidos: {data}")
+            
+            response = requests.post(
+                f'{settings.BACKEND_URL}/crear/categoria',
+                json=data,
+                headers={'Content-Type': 'application/json'}
+            )
+            
+            print(f"🎯 CREAR CATEGORIA - Respuesta backend: {response.status_code}")
+            
+            return JsonResponse(response.json())
+            
+        except Exception as e:
+            print(f"🎯 CREAR CATEGORIA - Error: {e}")
+            return JsonResponse({'error': str(e)})
+    
+    return JsonResponse({'error': 'Método no permitido'})
+
+def crear_cliente(request):
+    if request.method == 'POST':
+        import json
+        try:
+            data = json.loads(request.body)
+            
+            print(f"🎯 CREAR CLIENTE - Datos recibidos: {data}")
+            
+            response = requests.post(
+                f'{settings.BACKEND_URL}/crear/cliente',
+                json=data,
+                headers={'Content-Type': 'application/json'}
+            )
+            
+            print(f"🎯 CREAR CLIENTE - Respuesta backend: {response.status_code}")
+            
+            return JsonResponse(response.json())
+            
+        except Exception as e:
+            print(f"🎯 CREAR CLIENTE - Error: {e}")
+            return JsonResponse({'error': str(e)})
+    
+    return JsonResponse({'error': 'Método no permitido'})
+
 def consumo(request):
     if request.method == 'POST' and request.FILES.get('archivo_xml'):
         archivo = request.FILES['archivo_xml']
@@ -55,6 +131,7 @@ def consultar_datos(request):
     except Exception as e:
         print(f"🔍 CONSULTA - Error: {e}")
         return JsonResponse({'error': str(e)})
+    
     
 def reset_sistema(request):
     if request.method == 'POST':

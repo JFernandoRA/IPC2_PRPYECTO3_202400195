@@ -1,0 +1,39 @@
+<?xml version='1.0' encoding='utf-8'?>
+<clientes>
+  <cliente nit="12345-6">
+    <nombre>Empresa Tech Solutions</nombre>
+    <usuario>techsolutions</usuario>
+    <clave>clave123</clave>
+    <direccion>Zona 10, Ciudad de Guatemala</direccion>
+    <correoElectronico>contacto@techsolutions.com</correoElectronico>
+    <instancias>
+      <instancia id="1">
+        <idConfiguracion>1</idConfiguracion>
+        <nombre>Servidor Desarrollo Web</nombre>
+        <fechaInicio>01/10/2025</fechaInicio>
+        <estado>Vigente</estado>
+      </instancia>
+      <instancia id="2">
+        <idConfiguracion>2</idConfiguracion>
+        <nombre>Servidor Base de Datos</nombre>
+        <fechaInicio>15/10/2025</fechaInicio>
+        <estado>Vigente</estado>
+      </instancia>
+    </instancias>
+  </cliente>
+  <cliente nit="67890-1">
+    <nombre>Startup Innovadora</nombre>
+    <usuario>startup2025</usuario>
+    <clave>password456</clave>
+    <direccion>Zona 14, Guatemala</direccion>
+    <correoElectronico>info@startup.com</correoElectronico>
+    <instancias>
+      <instancia id="3">
+        <idConfiguracion>3</idConfiguracion>
+        <nombre>Servidor Testing</nombre>
+        <fechaInicio>10/10/2025</fechaInicio>
+        <estado>Vigente</estado>
+      </instancia>
+    </instancias>
+  </cliente>
+</clientes>
