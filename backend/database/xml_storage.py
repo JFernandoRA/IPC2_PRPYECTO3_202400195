@@ -347,8 +347,13 @@ def guardar_factura(factura):
     
     try:
         if os.path.exists(file_path) and os.path.getsize(file_path) > 0:
-            tree = ET.parse(file_path)
-            root = tree.getroot()
+            try:
+                tree = ET.parse(file_path)
+                root = tree.getroot()
+            except ET.ParseError:
+                # Si el archivo está corrupto, crear uno nuevo
+                root = ET.Element('facturas')
+                tree = ET.ElementTree(root)
         else:
             root = ET.Element('facturas')
             tree = ET.ElementTree(root)
@@ -357,6 +362,7 @@ def guardar_factura(factura):
         root = ET.Element('facturas')
         tree = ET.ElementTree(root)
     
+    # Crear elemento factura
     factura_elem = ET.SubElement(root, 'factura')
     factura_elem.set('numero', str(factura.numero_factura))
     
@@ -371,9 +377,16 @@ def guardar_factura(factura):
         ET.SubElement(detalle_elem, 'tiempoTotal').text = str(detalle['tiempo_total'])
         ET.SubElement(detalle_elem, 'monto').text = str(detalle['monto'])
     
+    # Aplicar formato y guardar
     indent(root)
-    tree.write(file_path, encoding='utf-8', xml_declaration=True)
-    print(f"💾 Factura guardada: {factura.numero_factura} - Monto: {factura.monto_total}")
+    
+    # Escribir con declaración XML correctamente
+    with open(file_path, 'w', encoding='utf-8') as f:
+        f.write('<?xml version="1.0" encoding="UTF-8"?>\n')
+        tree.write(f, encoding='unicode')
+    
+    print(f"💾 Factura guardada exitosamente: {factura.numero_factura} - Monto: Q{factura.monto_total:.2f}")
+    return True
 
 def cargar_facturas():
     ensure_data_dir()

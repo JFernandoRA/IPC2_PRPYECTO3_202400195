@@ -1,12 +1,12 @@
 <?xml version='1.0' encoding='utf-8'?>
 <categorias>
   <categoria id="1">
-    <nombre>Desarrollo</nombre>
-    <descripcion>Máquinas virtuales para desarrollo de software</descripcion>
-    <cargaTrabajo>Desarrollo y testing de aplicaciones</cargaTrabajo>
+    <nombre>Máquinas Virtuales Desarrollo</nombre>
+    <descripcion>Configuraciones para entornos de desarrollo y pruebas</descripcion>
+    <cargaTrabajo>Desarrollo de software</cargaTrabajo>
     <configuraciones>
       <configuracion id="1">
-        <nombre>Config Desarrollo Básico</nombre>
+        <nombre>Dev Basic</nombre>
         <descripcion>Configuración básica para desarrollo</descripcion>
         <recursos>
           <recurso id="1">2.0</recurso>
@@ -15,29 +15,19 @@
         </recursos>
       </configuracion>
       <configuracion id="2">
-        <nombre>Config Desarrollo Avanzado</nombre>
-        <descripcion>Configuración para desarrollo intensivo</descripcion>
+        <nombre>Configuracion de prueba</nombre>
+        <descripcion>prueba 1</descripcion>
         <recursos>
-          <recurso id="1">4.0</recurso>
-          <recurso id="2">8.0</recurso>
+          <recurso id="1">2.0</recurso>
+          <recurso id="2">4.0</recurso>
           <recurso id="3">100.0</recurso>
-          <recurso id="4">1.0</recurso>
         </recursos>
       </configuracion>
-    </configuraciones>
-  </categoria>
-  <categoria id="2">
-    <nombre>Económica</nombre>
-    <descripcion>Máquinas virtuales de bajo costo</descripcion>
-    <cargaTrabajo>Cargas de trabajo ligeras</cargaTrabajo>
-    <configuraciones>
       <configuracion id="3">
-        <nombre>Config Económica Básica</nombre>
-        <descripcion>Configuración económica básica</descripcion>
+        <nombre>otra prueba</nombre>
+        <descripcion>prueba 2</descripcion>
         <recursos>
-          <recurso id="1">1.0</recurso>
-          <recurso id="2">2.0</recurso>
-          <recurso id="3">25.0</recurso>
+          <recurso id="1">8.0</recurso>
         </recursos>
       </configuracion>
     </configuraciones>

@@ -15,6 +15,6 @@ urlpatterns = [
     path('crear/recurso/', views.crear_recurso, name='crear_recurso'),
     path('crear/categoria/', views.crear_categoria, name='crear_categoria'),
     path('crear/cliente/', views.crear_cliente, name='crear_cliente'),
-    
+    path('crear/configuracion/', views.crear_configuracion, name='crear_configuracion'),
     
 ]

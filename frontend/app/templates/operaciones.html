@@ -1,5 +1,4 @@
 {% extends "base.html" %}
-
 {% block content %}
 <div class="card">
     <h2 style="color: #2c3e50; margin-bottom: 25px; text-align: center;">Operaciones del Sistema</h2>
@@ -64,6 +63,7 @@
             <button onclick="mostrarFormulario('recurso')" class="btn" style="margin: 5px;">Nuevo Recurso</button>
             <button onclick="mostrarFormulario('categoria')" class="btn" style="margin: 5px;">Nueva Categoría</button>
             <button onclick="mostrarFormulario('cliente')" class="btn" style="margin: 5px;">Nuevo Cliente</button>
+            <button onclick="mostrarFormulario('configuracion')" class="btn" style="margin: 5px;">Nueva Configuración</button>
         </div>
         
         <!-- Formulario para Recurso -->
@@ -138,7 +138,37 @@
                 <button type="submit" class="btn">Crear Cliente</button>
             </form>
         </div>
-    </div>
+<!-- Formulario para Configuración -->
+<div id="formConfiguracion" class="formulario-creacion" style="display: none;">
+    <h4>Nueva Configuración</h4>
+    <form id="formCrearConfiguracion">
+        {% csrf_token %}
+        <div class="form-group">
+            <label class="form-label">Categoría</label>
+            <select name="categoria_id" class="form-control" required id="selectCategoria">
+                <option value="">Cargando categorías...</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <input type="text" name="nombre" placeholder="Nombre de la configuración" class="form-control" required>
+        </div>
+        <div class="form-group">
+            <textarea name="descripcion" placeholder="Descripción de la configuración" class="form-control" required></textarea>
+        </div>
+        
+        <!-- Sección de Recursos -->
+        <div class="form-group">
+            <label class="form-label">Recursos de la Configuración</label>
+            <div id="recursos-container">
+                <!-- Los recursos se agregarán dinámicamente aquí -->
+            </div>
+            <button type="button" class="btn" onclick="agregarRecurso()" style="background: #3498db; margin-top: 10px;">
+                + Agregar Recurso
+            </button>
+        </div>
+        
+        <button type="submit" class="btn">Crear Configuración</button>
+    </form>
 </div>
 
 <div id="result" class="result-box"></div>
@@ -229,37 +259,89 @@ function consultarDatos(tipo) {
             console.log("🔍 DATOS ENCONTRADOS - Cantidad:", data.datos.length);
             
             html += `<p>Total de elementos: ${data.datos.length}</p>`;
-            html += '<div style="overflow-x: auto;">';
-            html += '<table style="width: auto; min-width: 100%; border-collapse: collapse; margin-top: 10px; white-space: nowrap;">';
             
-            const firstItem = data.datos[0];
-            
-            // MOSTRAR TODAS LAS COLUMNAS - SOLO OCULTAR LAS COMPLEJAS
-            html += '<tr>';
-            for (const key in firstItem) {
-                // Solo ocultar campos que son arrays/objetos complejos
-                if (key !== 'configuraciones' && key !== 'instancias' && key !== 'detalles') {
-                    html += `<th style="border: 1px solid #ddd; padding: 8px; background: #f2f2f2;">${key}</th>`;
-                }
-            }
-            html += '</tr>';
-            
-            // MOSTRAR TODOS LOS DATOS
-            data.datos.forEach((item, index) => {
-                console.log(`🔍 ELEMENTO ${index}:`, item);
+            if (tipo === 'categorias') {
+                // MOSTRAR CATEGORÍAS CON SUS CONFIGURACIONES
+                data.datos.forEach((categoria, index) => {
+                    html += `<div style="border: 2px solid #3498db; border-radius: 10px; padding: 15px; margin: 15px 0; background: #f8f9fa;">`;
+                    html += `<h5 style="color: #2c3e50; margin-bottom: 10px;">Categoría: ${categoria.nombre} (ID: ${categoria.id})</h5>`;
+                    html += `<p><strong>Descripción:</strong> ${categoria.descripcion}</p>`;
+                    html += `<p><strong>Carga de trabajo:</strong> ${categoria.carga_trabajo}</p>`;
+                    
+                    if (categoria.configuraciones && categoria.configuraciones.length > 0) {
+                        html += `<h6 style="color: #27ae60; margin: 15px 0 10px 0;">Configuraciones (${categoria.configuraciones.length}):</h6>`;
+                        html += '<div style="overflow-x: auto;">';
+                        html += '<table style="width: 100%; border-collapse: collapse; margin-top: 10px;">';
+                        html += '<tr style="background: #2ecc71; color: white;">';
+                        html += '<th style="border: 1px solid #ddd; padding: 8px;">ID</th>';
+                        html += '<th style="border: 1px solid #ddd; padding: 8px;">Nombre</th>';
+                        html += '<th style="border: 1px solid #ddd; padding: 8px;">Descripción</th>';
+                        html += '<th style="border: 1px solid #ddd; padding: 8px;">Recursos</th>';
+                        html += '</tr>';
+                        
+                        categoria.configuraciones.forEach(config => {
+                            html += '<tr style="background: white;">';
+                            html += `<td style="border: 1px solid #ddd; padding: 8px;">${config.id}</td>`;
+                            html += `<td style="border: 1px solid #ddd; padding: 8px;">${config.nombre}</td>`;
+                            html += `<td style="border: 1px solid #ddd; padding: 8px;">${config.descripcion}</td>`;
+                            
+                            // Mostrar recursos de la configuración
+                            let recursosHtml = '';
+                            if (config.recursos && Object.keys(config.recursos).length > 0) {
+                                recursosHtml = '<ul style="margin: 0; padding-left: 20px;">';
+                                for (const [recursoId, cantidad] of Object.entries(config.recursos)) {
+                                    recursosHtml += `<li>Recurso ${recursoId}: ${cantidad} unidades</li>`;
+                                }
+                                recursosHtml += '</ul>';
+                            } else {
+                                recursosHtml = 'Sin recursos';
+                            }
+                            html += `<td style="border: 1px solid #ddd; padding: 8px;">${recursosHtml}</td>`;
+                            html += '</tr>';
+                        });
+                        
+                        html += '</table>';
+                        html += '</div>';
+                    } else {
+                        html += '<p style="color: #e74c3c;"> No hay configuraciones en esta categoría</p>';
+                    }
+                    
+                    html += '</div>';
+                });
+            } else {
+                // MOSTRAR OTROS TIPOS DE DATOS (recursos, clientes, etc.)
+                html += '<div style="overflow-x: auto;">';
+                html += '<table style="width: auto; min-width: 100%; border-collapse: collapse; margin-top: 10px; white-space: nowrap;">';
+                
+                const firstItem = data.datos[0];
+                
+                // MOSTRAR TODAS LAS COLUMNAS - SOLO OCULTAR LAS COMPLEJAS
                 html += '<tr>';
                 for (const key in firstItem) {
                     // Solo ocultar campos que son arrays/objetos complejos
                     if (key !== 'configuraciones' && key !== 'instancias' && key !== 'detalles') {
-                        let value = item[key];
-                        if (value === null || value === undefined) value = '';
-                        html += `<td style="border: 1px solid #ddd; padding: 8px;">${value}</td>`;
+                        html += `<th style="border: 1px solid #ddd; padding: 8px; background: #f2f2f2;">${key}</th>`;
                     }
                 }
                 html += '</tr>';
-            });
-            html += '</table>';
-            html += '</div>';
+                
+                // MOSTRAR TODOS LOS DATOS
+                data.datos.forEach((item, index) => {
+                    console.log(`🔍 ELEMENTO ${index}:`, item);
+                    html += '<tr>';
+                    for (const key in firstItem) {
+                        // Solo ocultar campos que son arrays/objetos complejos
+                        if (key !== 'configuraciones' && key !== 'instancias' && key !== 'detalles') {
+                            let value = item[key];
+                            if (value === null || value === undefined) value = '';
+                            html += `<td style="border: 1px solid #ddd; padding: 8px;">${value}</td>`;
+                        }
+                    }
+                    html += '</tr>';
+                });
+                html += '</table>';
+                html += '</div>';
+            }
         } else {
             html += '<p>No hay datos disponibles</p>';
         }
@@ -419,6 +501,178 @@ document.getElementById('formCrearCliente').addEventListener('submit', function(
         showResult('Error: ' + error.message, false);
     });
 });
+
+// Variable global para recursos disponibles
+let recursosDisponibles = [];
+
+// Cargar categorías y recursos al mostrar el formulario
+function cargarDatosConfiguracion() {
+    // Cargar categorías
+    fetch('{% url "consultar_datos" %}?tipo=categorias')
+        .then(response => response.json())
+        .then(data => {
+            const select = document.getElementById('selectCategoria');
+            select.innerHTML = '<option value="">Seleccionar categoría...</option>';
+            
+            if (data.datos && data.datos.length > 0) {
+                data.datos.forEach(categoria => {
+                    const option = document.createElement('option');
+                    option.value = categoria.id;
+                    option.textContent = `${categoria.nombre} (ID: ${categoria.id})`;
+                    select.appendChild(option);
+                });
+            }
+        });
+    
+    // Cargar recursos
+    fetch('{% url "consultar_datos" %}?tipo=recursos')
+        .then(response => response.json())
+        .then(data => {
+            if (data.datos && data.datos.length > 0) {
+                recursosDisponibles = data.datos;
+                console.log("Recursos cargados:", recursosDisponibles);
+            }
+        });
+}
+
+// Agregar recurso a la configuración
+function agregarRecurso() {
+    const container = document.getElementById('recursos-container');
+    
+    const recursoDiv = document.createElement('div');
+    recursoDiv.className = 'recurso-item';
+    recursoDiv.style.cssText = 'display: flex; gap: 10px; margin-bottom: 10px; align-items: center;';
+    
+    recursoDiv.innerHTML = `
+        <select class="form-control select-recurso" style="flex: 2;" onchange="actualizarMetrica(this)">
+            <option value="">Seleccionar recurso...</option>
+            ${recursosDisponibles.map(recurso => 
+                `<option value="${recurso.id}" data-metrica="${recurso.metrica}">
+                    ${recurso.nombre} (${recurso.metrica}) - Q${recurso.valor_x_hora}/hora
+                </option>`
+            ).join('')}
+        </select>
+        <input type="number" class="form-control cantidad-recurso" placeholder="Cantidad" style="flex: 1;" min="1" step="1">
+        <span class="metrica-recurso" style="min-width: 60px; color: #666;"></span>
+        <button type="button" class="btn" onclick="eliminarRecurso(this)" style="background: #e74c3c; padding: 8px 12px;">
+            ✕
+        </button>
+    `;
+    
+    container.appendChild(recursoDiv);
+}
+
+// Actualizar métrica cuando se selecciona un recurso
+function actualizarMetrica(select) {
+    const selectedOption = select.options[select.selectedIndex];
+    const metrica = selectedOption.getAttribute('data-metrica');
+    const metricaSpan = select.parentNode.querySelector('.metrica-recurso');
+    metricaSpan.textContent = metrica || '';
+}
+
+// Eliminar recurso de la configuración
+function eliminarRecurso(button) {
+    button.parentNode.remove();
+}
+
+// Formulario para crear configuración
+document.getElementById('formCrearConfiguracion').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    console.log("🟡 DEBUG - Iniciando envío de configuración");
+    
+    // Recolectar recursos
+    const recursos = [];
+    const recursoItems = document.querySelectorAll('.recurso-item');
+    
+    recursoItems.forEach(item => {
+        const select = item.querySelector('.select-recurso');
+        const cantidadInput = item.querySelector('.cantidad-recurso');
+        
+        if (select.value && cantidadInput.value) {
+            recursos.push({
+                id: select.value,
+                cantidad: cantidadInput.value
+            });
+        }
+    });
+    
+    if (recursos.length === 0) {
+        showResult('Error: Debe agregar al menos un recurso a la configuración', false);
+        return;
+    }
+    
+    const data = {
+        'categoria_id': this.categoria_id.value,
+        'nombre': this.nombre.value,
+        'descripcion': this.descripcion.value,
+        'recursos': recursos
+    };
+    
+    console.log("🟡 DEBUG - Datos a enviar:", data);
+    
+    fetch('{% url "crear_configuracion" %}', {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': getCookie('csrftoken'),
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data)
+    })
+    .then(response => {
+        console.log("🟡 DEBUG - Response status:", response.status);
+        return response.text().then(text => {
+            console.log("🟡 DEBUG - Response text:", text);
+            try {
+                return JSON.parse(text);
+            } catch (e) {
+                throw new Error(`Respuesta no JSON: ${text}`);
+            }
+        });
+    })
+    .then(data => {
+        console.log("🟡 DEBUG - Datos parseados:", data);
+        if (data.error) {
+            showResult('Error: ' + data.error, false);
+        } else {
+            showResult('Configuración creada exitosamente', true);
+            this.reset();
+            // Limpiar recursos
+            document.getElementById('recursos-container').innerHTML = '';
+        }
+    })
+    .catch(error => {
+        console.error("🔴 DEBUG - Error completo:", error);
+        showResult('Error: ' + error.message, false);
+    });
+});
+
+// Modificar la función mostrarFormulario para cargar datos cuando se muestra configuración
+function mostrarFormulario(tipo) {
+    console.log("🟡 Mostrando formulario para:", tipo);
+    
+    // Ocultar todos los formularios
+    const formularios = document.querySelectorAll('.formulario-creacion');
+    formularios.forEach(form => {
+        form.style.display = 'none';
+    });
+    
+    // Mostrar el formulario seleccionado
+    const formularioId = 'form' + tipo.charAt(0).toUpperCase() + tipo.slice(1);
+    const formulario = document.getElementById(formularioId);
+    
+    if (formulario) {
+        formulario.style.display = 'block';
+        console.log("🟡 Formulario mostrado:", formularioId);
+        
+        // Si es configuración, cargar datos
+        if (tipo === 'configuracion') {
+            cargarDatosConfiguracion();
+        }
+    } else {
+        console.error("🔴 No se encontró el formulario:", formularioId);
+    }
+}
 
 // Función para obtener el CSRF token
 function getCookie(name) {

@@ -1,15 +1,15 @@
 <?xml version='1.0' encoding='utf-8'?>
 <consumos>
   <consumo nitCliente="12345-6" idInstancia="1">
-    <tiempo>5.0</tiempo>
-    <fechahora>26/10/2025 08:00</fechahora>
+    <tiempo>5.5</tiempo>
+    <fechahora>15/10/2025 14:30</fechahora>
   </consumo>
-  <consumo nitCliente="67890-1" idInstancia="3">
-    <tiempo>12.0</tiempo>
-    <fechahora>26/10/2025 09:00</fechahora>
+  <consumo nitCliente="12345-6" idInstancia="2">
+    <tiempo>3.25</tiempo>
+    <fechahora>15/10/2025 16:45</fechahora>
   </consumo>
-  <consumo nitCliente="12345-6" idInstancia="99">
-    <tiempo>3.0</tiempo>
-    <fechahora>26/10/2025 10:00</fechahora>
+  <consumo nitCliente="12345-6" idInstancia="1">
+    <tiempo>2.0</tiempo>
+    <fechahora>16/10/2025 09:15</fechahora>
   </consumo>
 </consumos>

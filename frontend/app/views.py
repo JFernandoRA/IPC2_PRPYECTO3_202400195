@@ -25,6 +25,8 @@ def configuracion(request):
     
     return render(request, 'configuracion.html')
 
+
+
 # Agregar estas funciones al views.py del frontend
 
 def crear_recurso(request):
@@ -49,6 +51,30 @@ def crear_recurso(request):
             
         except Exception as e:
             print(f"🎯 CREAR RECURSO - Error: {e}")
+            return JsonResponse({'error': str(e)})
+    
+    return JsonResponse({'error': 'Método no permitido'})
+
+def crear_configuracion(request):
+    if request.method == 'POST':
+        import json
+        try:
+            data = json.loads(request.body)
+            
+            print(f"🎯 CREAR CONFIGURACION - Datos recibidos: {data}")
+            
+            response = requests.post(
+                f'{settings.BACKEND_URL}/crear/configuracion',
+                json=data,
+                headers={'Content-Type': 'application/json'}
+            )
+            
+            print(f"🎯 CREAR CONFIGURACION - Respuesta backend: {response.status_code}")
+            
+            return JsonResponse(response.json())
+            
+        except Exception as e:
+            print(f"🎯 CREAR CONFIGURACION - Error: {e}")
             return JsonResponse({'error': str(e)})
     
     return JsonResponse({'error': 'Método no permitido'})

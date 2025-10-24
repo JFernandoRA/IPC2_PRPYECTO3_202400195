@@ -8,7 +8,8 @@ from database.xml_storage import (
     guardar_consumo, guardar_factura, cargar_recursos, cargar_categorias, 
     cargar_clientes, cargar_consumos, cargar_facturas
 )
-from database.models import Recurso, Categoria, Cliente
+from database.models import Recurso, Configuracion, Categoria, Cliente
+from utils.validators import validar_nit
 
 app = Flask(__name__)
 
@@ -137,7 +138,6 @@ def crear_cliente():
         data = request.json
         
         # Validar NIT
-        from utils.validators import validar_nit
         if not validar_nit(data.get('nit')):
             return jsonify({"error": "NIT inválido"}), 400
         
@@ -155,6 +155,106 @@ def crear_cliente():
         return jsonify({"mensaje": "Cliente creado exitosamente"})
         
     except Exception as e:
+        return jsonify({"error": f"Error interno: {str(e)}"}), 500
+
+@app.route('/crear/configuracion', methods=['POST'])
+def crear_configuracion():
+    try:
+        data = request.json
+        print(f"🔧 BACKEND - Creando configuración: {data}")
+        
+        # Cargar categorías existentes
+        categorias = cargar_categorias()
+        
+        print(f"🔧 BACKEND - Categorías disponibles:")
+        for cat in categorias:
+            print(f"  - ID: '{cat['id']}' (tipo: {type(cat['id']).__name__}), Nombre: '{cat.get('nombre', 'N/A')}'")
+        
+        # Buscar la categoría donde agregar la configuración
+        categoria_id = data.get('categoria_id')
+        categoria_encontrada = None
+        
+        for categoria in categorias:
+            # Comparar como strings para evitar problemas de tipo
+            print(f"🔧 BACKEND - Comparando: '{categoria['id']}' con '{categoria_id}'")
+            if str(categoria['id']) == str(categoria_id):
+                categoria_encontrada = categoria
+                print(f"🔧 BACKEND - ✅ Categoría encontrada: {categoria_encontrada['nombre']}")
+                break
+        
+        if not categoria_encontrada:
+            print(f"🔧 BACKEND - ❌ ERROR: No se encontró categoría con ID {categoria_id}")
+            print(f"🔧 BACKEND - IDs disponibles: {[cat['id'] for cat in categorias]}")
+            return jsonify({"error": f"Categoría con ID {categoria_id} no encontrada. IDs disponibles: {[cat['id'] for cat in categorias]}"}), 400
+        
+        # Generar ID único para la configuración
+        nuevo_id = generar_id_configuracion(categoria_encontrada)
+        
+        # Crear recursos de la configuración
+        recursos_config = {}
+        for recurso in data.get('recursos', []):
+            recursos_config[int(recurso['id'])] = float(recurso['cantidad'])
+            print(f"🔧 BACKEND - Recurso agregado: ID {recurso['id']}, Cantidad: {recurso['cantidad']}")
+        
+        # Crear objeto Configuracion
+        nueva_configuracion = Configuracion(
+            id_configuracion=nuevo_id,
+            nombre=data.get('nombre'),
+            descripcion=data.get('descripcion'),
+            recursos=recursos_config
+        )
+        
+        # Agregar a la categoría
+        if 'configuraciones' not in categoria_encontrada:
+            categoria_encontrada['configuraciones'] = []
+        
+        # Convertir a dict para guardar
+        config_dict = {
+            'id': str(nuevo_id),
+            'nombre': nueva_configuracion.nombre,
+            'descripcion': nueva_configuracion.descripcion,
+            'recursos': recursos_config
+        }
+        
+        categoria_encontrada['configuraciones'].append(config_dict)
+        
+        # Convertir de vuelta a objeto Categoria y guardar
+        configuraciones_obj = []
+        for config in categoria_encontrada.get('configuraciones', []):
+            recursos_obj = {}
+            for recurso_id, cantidad in config.get('recursos', {}).items():
+                recursos_obj[int(recurso_id)] = float(cantidad)
+            
+            config_obj = Configuracion(
+                id_configuracion=int(config['id']),
+                nombre=config['nombre'],
+                descripcion=config['descripcion'],
+                recursos=recursos_obj
+            )
+            configuraciones_obj.append(config_obj)
+        
+        categoria_obj = Categoria(
+            id_categoria=int(categoria_encontrada['id']),
+            nombre=categoria_encontrada['nombre'],
+            descripcion=categoria_encontrada['descripcion'],
+            carga_trabajo=categoria_encontrada['carga_trabajo'],
+            configuraciones=configuraciones_obj
+        )
+        
+        guardar_categoria(categoria_obj)
+        
+        print(f"🔧 BACKEND - ✅ Configuración creada exitosamente: {config_dict}")
+        
+        return jsonify({
+            "mensaje": "Configuración creada exitosamente",
+            "id": nuevo_id,
+            "configuracion": config_dict
+        })
+        
+    except Exception as e:
+        print(f"🔧 BACKEND - ❌ Error: {str(e)}")
+        import traceback
+        print(f"🔧 BACKEND - Traceback: {traceback.format_exc()}")
         return jsonify({"error": f"Error interno: {str(e)}"}), 500
 
 # FUNCIONES AUXILIARES PARA GENERAR IDs
@@ -215,7 +315,20 @@ def generar_id_categoria():
     except Exception as e:
         print(f"🔴 ERROR en generar_id_categoria: {e}")
         return 1
+
+def generar_id_configuracion(categoria):
+    """Genera un ID único para una configuración dentro de una categoría"""
+    if not categoria.get('configuraciones'):
+        return 1
     
+    ids = []
+    for config in categoria['configuraciones']:
+        try:
+            ids.append(int(config['id']))
+        except (ValueError, KeyError):
+            continue
+    
+    return max(ids) + 1 if ids else 1
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
