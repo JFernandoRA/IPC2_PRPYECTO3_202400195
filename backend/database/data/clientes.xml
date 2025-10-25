@@ -1,16 +1,97 @@
 <?xml version='1.0' encoding='utf-8'?>
 <clientes>
   <cliente nit="12345-6">
-    <nombre>Empresa Ejemplo S.A.</nombre>
-    <usuario>empresa_ejemplo</usuario>
-    <clave>password123</clave>
-    <direccion>Ciudad de Guatemala</direccion>
-    <correoElectronico>contacto@empresaejemplo.com</correoElectronico>
+    <nombre>Tech Solutions Guatemala</nombre>
+    <usuario>techsolgt</usuario>
+    <clave>clave123</clave>
+    <direccion>15 Calle 8-60 Zona 10, Guatemala City</direccion>
+    <correoElectronico>contacto@techsolutionsgt.com</correoElectronico>
     <instancias>
       <instancia id="1">
+        <idConfiguracion>2</idConfiguracion>
+        <nombre>Servidor Desarrollo Principal</nombre>
+        <fechaInicio>15/08/2024</fechaInicio>
+        <estado>Vigente</estado>
+      </instancia>
+      <instancia id="2">
+        <idConfiguracion>3</idConfiguracion>
+        <nombre>Servidor Producción App</nombre>
+        <fechaInicio>01/09/2024</fechaInicio>
+        <estado>Vigente</estado>
+      </instancia>
+      <instancia id="3">
+        <idConfiguracion>5</idConfiguracion>
+        <nombre>Sitio Web Corporativo</nombre>
+        <fechaInicio>10/07/2024</fechaInicio>
+        <estado>Vigente</estado>
+      </instancia>
+    </instancias>
+  </cliente>
+  <cliente nit="67890-1">
+    <nombre>Comercio Digital S.A.</nombre>
+    <usuario>comerciodigital</usuario>
+    <clave>password456</clave>
+    <direccion>8a Avenida 12-45 Zona 1, Guatemala City</direccion>
+    <correoElectronico>info@comerciodigital.com</correoElectronico>
+    <instancias>
+      <instancia id="4">
+        <idConfiguracion>6</idConfiguracion>
+        <nombre>Tienda Online Principal</nombre>
+        <fechaInicio>20/09/2024</fechaInicio>
+        <estado>Vigente</estado>
+      </instancia>
+      <instancia id="5">
+        <idConfiguracion>4</idConfiguracion>
+        <nombre>Servidor Base de Datos</nombre>
+        <fechaInicio>05/08/2024</fechaInicio>
+        <estado>Vigente</estado>
+      </instancia>
+    </instancias>
+  </cliente>
+  <cliente nit="54321-0">
+    <nombre>Startup Innovadora GT</nombre>
+    <usuario>startupgt</usuario>
+    <clave>innovacion2024</clave>
+    <direccion>Diagonal 6 12-45 Zona 10, Guatemala City</direccion>
+    <correoElectronico>hola@startupgt.com</correoElectronico>
+    <instancias>
+      <instancia id="6">
         <idConfiguracion>1</idConfiguracion>
-        <nombre>Servidor Desarrollo 1</nombre>
-        <fechaInicio>01/01/2025</fechaInicio>
+        <nombre>Desarrollo MVP</nombre>
+        <fechaInicio>01/10/2024</fechaInicio>
+        <estado>Vigente</estado>
+      </instancia>
+      <instancia id="7">
+        <idConfiguracion>5</idConfiguracion>
+        <nombre>Landing Page</nombre>
+        <fechaInicio>15/09/2024</fechaInicio>
+        <estado>Vigente</estado>
+      </instancia>
+    </instancias>
+  </cliente>
+  <cliente nit="98765-K">
+    <nombre>Corporación Financiera Centroamericana</nombre>
+    <usuario>corpfinanciera</usuario>
+    <clave>secure789</clave>
+    <direccion>7a Avenida 7-70 Zona 9, Guatemala City</direccion>
+    <correoElectronico>soporte@corpfinanciera.com</correoElectronico>
+    <instancias>
+      <instancia id="8">
+        <idConfiguracion>4</idConfiguracion>
+        <nombre>Servidor Transaccional</nombre>
+        <fechaInicio>01/07/2024</fechaInicio>
+        <estado>Vigente</estado>
+      </instancia>
+      <instancia id="9">
+        <idConfiguracion>3</idConfiguracion>
+        <nombre>Backup Database</nombre>
+        <fechaInicio>15/08/2024</fechaInicio>
+        <estado>Vigente</estado>
+      </instancia>
+      <instancia id="10">
+        <idConfiguracion>2</idConfiguracion>
+        <nombre>Desarrollo Financiero</nombre>
+        <fechaInicio>10/09/2024</fechaInicio>
         <estado>Vigente</estado>
       </instancia>
     </instancias>

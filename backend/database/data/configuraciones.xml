@@ -1,10 +1,3 @@
 <?xml version='1.0' encoding='utf-8'?>
 <configuraciones>
-  <recurso id="1">
-    <nombre>GPU Test</nombre>
-    <abreviatura>GPU</abreviatura>
-    <metrica>unidades</metrica>
-    <tipo>Hardware</tipo>
-    <valorXhora>5.0</valorXhora>
-  </recurso>
 </configuraciones>

@@ -70,39 +70,48 @@
 
 <script>
 function cargarEstadisticasReales() {
-    fetch('{% url "consultar_datos" %}?tipo=configuraciones')
+    // Cargar recursos
+    fetch('{% url "consultar_datos" %}?tipo=recursos')
     .then(response => response.json())
     .then(data => {
         let recursos = 0;
-        let clientes = 0;
-        let instancias = 0;
-        
-        if (data.datos && data.datos.length > 0) {
-            data.datos.forEach(item => {
-                if (item.tipo === 'recurso') {
-                    recursos++;
-                } else if (item.tipo === 'cliente') {
-                    clientes++;
-                    if (item.instancias) {
-                        instancias += item.instancias.length;
-                    }
-                }
-            });
+        if (data.datos) {
+            recursos = data.datos.length;
         }
-        
         document.getElementById('totalRecursos').textContent = recursos;
-        document.getElementById('totalClientes').textContent = clientes;
-        document.getElementById('totalInstancias').textContent = instancias;
     })
     .catch(error => {
         console.error('Error cargando recursos:', error);
     });
 
+    // Cargar clientes
+    fetch('{% url "consultar_datos" %}?tipo=clientes')
+    .then(response => response.json())
+    .then(data => {
+        let clientes = 0;
+        let instancias = 0;
+        if (data.datos) {
+            clientes = data.datos.length;
+            // Contar instancias de todos los clientes
+            data.datos.forEach(cliente => {
+                if (cliente.instancias) {
+                    instancias += cliente.instancias.length;
+                }
+            });
+        }
+        document.getElementById('totalClientes').textContent = clientes;
+        document.getElementById('totalInstancias').textContent = instancias;
+    })
+    .catch(error => {
+        console.error('Error cargando clientes:', error);
+    });
+
+    // Cargar facturas
     fetch('{% url "consultar_datos" %}?tipo=facturas')
     .then(response => response.json())
     .then(data => {
         let facturas = 0;
-        if (data.datos && data.datos.length > 0) {
+        if (data.datos) {
             facturas = data.datos.length;
         }
         document.getElementById('totalFacturas').textContent = facturas;

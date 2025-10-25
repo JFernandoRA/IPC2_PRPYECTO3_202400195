@@ -1,60 +1,292 @@
+<?xml version="1.0"?>
 <archivoConfiguraciones>
-<listaRecursos>
-<recurso id="1">
-<nombre>Núcleos CPU</nombre>
-<abreviatura>CPU</abreviatura>
-<metrica>unidades</metrica>
-<tipo>Hardware</tipo>
-<valorXhora>1.20</valorXhora>
-</recurso>
-<recurso id="2">
-<nombre>Memoria RAM</nombre>
-<abreviatura>RAM</abreviatura>
-<metrica>GiB</metrica>
-<tipo>Hardware</tipo>
-<valorXhora>0.75</valorXhora>
-</recurso>
-<recurso id="3">
-<nombre>Almacenamiento SSD</nombre>
-<abreviatura>SSD</abreviatura>
-<metrica>GB</metrica>
-<tipo>Hardware</tipo>
-<valorXhora>0.10</valorXhora>
-</recurso>
-</listaRecursos>
-<listaCategorias>
-<categoria id="1">
-<nombre>Máquinas Virtuales Desarrollo</nombre>
-<descripcion>Configuraciones para entornos de desarrollo y pruebas</descripcion>
-<cargaTrabajo>Desarrollo de software</cargaTrabajo>
-<listaConfiguraciones>
-<configuracion id="1">
-<nombre>Dev Basic</nombre>
-<descripcion>Configuración básica para desarrollo</descripcion>
-<recursosConfiguracion>
-<recurso id="1">2</recurso>
-<recurso id="2">4</recurso>
-<recurso id="3">50</recurso>
-</recursosConfiguracion>
-</configuracion>
-</listaConfiguraciones>
-</categoria>
-</listaCategorias>
-<listaClientes>
-<cliente nit="12345-6">
-<nombre>Empresa Ejemplo S.A.</nombre>
-<usuario>empresa_ejemplo</usuario>
-<clave>password123</clave>
-<direccion>Ciudad de Guatemala</direccion>
-<correoElectronico>contacto@empresaejemplo.com</correoElectronico>
-<listaInstancias>
-<instancia id="1">
-<idConfiguracion>1</idConfiguracion>
-<nombre>Servidor Desarrollo 1</nombre>
-<fechaInicio>01/01/2025</fechaInicio>
-<estado>Vigente</estado>
-</instancia>
-</listaInstancias>
-</cliente>
-</listaClientes>
+  <listaRecursos>
+    <!-- Recursos de Hardware -->
+    <recurso id="1">
+      <nombre>Procesador Intel Xeon</nombre>
+      <abreviatura>CPU</abreviatura>
+      <metrica>núcleos</metrica>
+      <tipo>Hardware</tipo>
+      <valorXhora>2.50</valorXhora>
+    </recurso>
+    <recurso id="2">
+      <nombre>Memoria RAM</nombre>
+      <abreviatura>RAM</abreviatura>
+      <metrica>GiB</metrica>
+      <tipo>Hardware</tipo>
+      <valorXhora>0.75</valorXhora>
+    </recurso>
+    <recurso id="3">
+      <nombre>Almacenamiento SSD</nombre>
+      <abreviatura>SSD</abreviatura>
+      <metrica>GiB</metrica>
+      <tipo>Hardware</tipo>
+      <valorXhora>0.25</valorXhora>
+    </recurso>
+    <recurso id="4">
+      <nombre>GPU NVIDIA Tesla</nombre>
+      <abreviatura>GPU</abreviatura>
+      <metrica>unidades</metrica>
+      <tipo>Hardware</tipo>
+      <valorXhora>5.00</valorXhora>
+    </recurso>
+    <recurso id="5">
+      <nombre>Ancho de Banda</nombre>
+      <abreviatura>BW</abreviatura>
+      <metrica>Mbps</metrica>
+      <tipo>Hardware</tipo>
+      <valorXhora>0.10</valorXhora>
+    </recurso>
+    
+    <!-- Recursos de Software -->
+    <recurso id="6">
+      <nombre>Windows Server 2022</nombre>
+      <abreviatura>WIN</abreviatura>
+      <metrica>licencias</metrica>
+      <tipo>Software</tipo>
+      <valorXhora>1.20</valorXhora>
+    </recurso>
+    <recurso id="7">
+      <nombre>Ubuntu Server</nombre>
+      <abreviatura>UBT</abreviatura>
+      <metrica>licencias</metrica>
+      <tipo>Software</tipo>
+      <valorXhora>0.50</valorXhora>
+    </recurso>
+    <recurso id="8">
+      <nombre>Microsoft SQL Server</nombre>
+      <abreviatura>SQL</abreviatura>
+      <metrica>instancias</metrica>
+      <tipo>Software</tipo>
+      <valorXhora>3.00</valorXhora>
+    </recurso>
+    <recurso id="9">
+      <nombre>Apache Web Server</nombre>
+      <abreviatura>APC</abreviatura>
+      <metrica>instancias</metrica>
+      <tipo>Software</tipo>
+      <valorXhora>0.80</valorXhora>
+    </recurso>
+    <recurso id="10">
+      <nombre>Docker Engine</nombre>
+      <abreviatura>DCK</abreviatura>
+      <metrica>contenedores</metrica>
+      <tipo>Software</tipo>
+      <valorXhora>0.30</valorXhora>
+    </recurso>
+  </listaRecursos>
+  
+  <listaCategorias>
+    <!-- Categoría 1: Desarrollo -->
+    <categoria id="1">
+      <nombre>Máquinas de Desarrollo</nombre>
+      <descripcion>Configuraciones optimizadas para entornos de desarrollo y pruebas</descripcion>
+      <cargaTrabajo>Desarrollo de software y testing</cargaTrabajo>
+      <listaConfiguraciones>
+        <configuracion id="1">
+          <nombre>Dev Básico</nombre>
+          <descripcion>Configuración básica para desarrolladores junior</descripcion>
+          <recursosConfiguracion>
+            <recurso id="1">2</recurso>
+            <recurso id="2">4</recurso>
+            <recurso id="3">50</recurso>
+            <recurso id="7">1</recurso>
+          </recursosConfiguracion>
+        </configuracion>
+        <configuracion id="2">
+          <nombre>Dev Avanzado</nombre>
+          <descripcion>Configuración para desarrolladores senior y leads</descripcion>
+          <recursosConfiguracion>
+            <recurso id="1">4</recurso>
+            <recurso id="2">8</recurso>
+            <recurso id="3">100</recurso>
+            <recurso id="4">1</recurso>
+            <recurso id="7">1</recurso>
+            <recurso id="10">5</recurso>
+          </recursosConfiguracion>
+        </configuracion>
+      </listaConfiguraciones>
+    </categoria>
+    
+    <!-- Categoría 2: Producción -->
+    <categoria id="2">
+      <nombre>Servidores de Producción</nombre>
+      <descripcion>Configuraciones de alta disponibilidad para entornos productivos</descripcion>
+      <cargaTrabajo>Carga de trabajo empresarial crítica</cargaTrabajo>
+      <listaConfiguraciones>
+        <configuracion id="3">
+          <nombre>Prod Pequeña</nombre>
+          <descripcion>Servidor pequeño para aplicaciones empresariales</descripcion>
+          <recursosConfiguracion>
+            <recurso id="1">8</recurso>
+            <recurso id="2">16</recurso>
+            <recurso id="3">200</recurso>
+            <recurso id="6">1</recurso>
+            <recurso id="8">1</recurso>
+          </recursosConfiguracion>
+        </configuracion>
+        <configuracion id="4">
+          <nombre>Prod Empresarial</nombre>
+          <descripcion>Servidor empresarial de alta capacidad</descripcion>
+          <recursosConfiguracion>
+            <recurso id="1">16</recurso>
+            <recurso id="2">32</recurso>
+            <recurso id="3">500</recurso>
+            <recurso id="4">2</recurso>
+            <recurso id="6">1</recurso>
+            <recurso id="8">2</recurso>
+            <recurso id="9">3</recurso>
+          </recursosConfiguracion>
+        </configuracion>
+      </listaConfiguraciones>
+    </categoria>
+    
+    <!-- Categoría 3: Web Hosting -->
+    <categoria id="3">
+      <nombre>Hosting Web</nombre>
+      <descripcion>Configuraciones optimizadas para hosting de sitios web</descripcion>
+      <cargaTrabajo>Sitios web y aplicaciones web</cargaTrabajo>
+      <listaConfiguraciones>
+        <configuracion id="5">
+          <nombre>Web Básico</nombre>
+          <descripcion>Hosting básico para sitios web pequeños</descripcion>
+          <recursosConfiguracion>
+            <recurso id="1">2</recurso>
+            <recurso id="2">2</recurso>
+            <recurso id="3">20</recurso>
+            <recurso id="7">1</recurso>
+            <recurso id="9">1</recurso>
+          </recursosConfiguracion>
+        </configuracion>
+        <configuracion id="6">
+          <nombre>Web E-commerce</nombre>
+          <descripcion>Hosting para tiendas en línea y e-commerce</descripcion>
+          <recursosConfiguracion>
+            <recurso id="1">4</recurso>
+            <recurso id="2">8</recurso>
+            <recurso id="3">100</recurso>
+            <recurso id="7">1</recurso>
+            <recurso id="9">2</recurso>
+            <recurso id="5">100</recurso>
+          </recursosConfiguracion>
+        </configuracion>
+      </listaConfiguraciones>
+    </categoria>
+  </listaCategorias>
+  
+  <listaClientes>
+    <!-- Cliente 1 -->
+    <cliente nit="12345-6">
+      <nombre>Tech Solutions Guatemala</nombre>
+      <usuario>techsolgt</usuario>
+      <clave>clave123</clave>
+      <direccion>15 Calle 8-60 Zona 10, Guatemala City</direccion>
+      <correoElectronico>contacto@techsolutionsgt.com</correoElectronico>
+      <listaInstancias>
+        <instancia id="1">
+          <idConfiguracion>2</idConfiguracion>
+          <nombre>Servidor Desarrollo Principal</nombre>
+          <fechaInicio>15/08/2024</fechaInicio>
+          <estado>Vigente</estado>
+          <fechaFinal></fechaFinal>
+        </instancia>
+        <instancia id="2">
+          <idConfiguracion>3</idConfiguracion>
+          <nombre>Servidor Producción App</nombre>
+          <fechaInicio>01/09/2024</fechaInicio>
+          <estado>Vigente</estado>
+          <fechaFinal></fechaFinal>
+        </instancia>
+        <instancia id="3">
+          <idConfiguracion>5</idConfiguracion>
+          <nombre>Sitio Web Corporativo</nombre>
+          <fechaInicio>10/07/2024</fechaInicio>
+          <estado>Vigente</estado>
+          <fechaFinal></fechaFinal>
+        </instancia>
+      </listaInstancias>
+    </cliente>
+    
+    <!-- Cliente 2 -->
+    <cliente nit="67890-1">
+      <nombre>Comercio Digital S.A.</nombre>
+      <usuario>comerciodigital</usuario>
+      <clave>password456</clave>
+      <direccion>8a Avenida 12-45 Zona 1, Guatemala City</direccion>
+      <correoElectronico>info@comerciodigital.com</correoElectronico>
+      <listaInstancias>
+        <instancia id="4">
+          <idConfiguracion>6</idConfiguracion>
+          <nombre>Tienda Online Principal</nombre>
+          <fechaInicio>20/09/2024</fechaInicio>
+          <estado>Vigente</estado>
+          <fechaFinal></fechaFinal>
+        </instancia>
+        <instancia id="5">
+          <idConfiguracion>4</idConfiguracion>
+          <nombre>Servidor Base de Datos</nombre>
+          <fechaInicio>05/08/2024</fechaInicio>
+          <estado>Vigente</estado>
+          <fechaFinal></fechaFinal>
+        </instancia>
+      </listaInstancias>
+    </cliente>
+    
+    <!-- Cliente 3 -->
+    <cliente nit="54321-0">
+      <nombre>Startup Innovadora GT</nombre>
+      <usuario>startupgt</usuario>
+      <clave>innovacion2024</clave>
+      <direccion>Diagonal 6 12-45 Zona 10, Guatemala City</direccion>
+      <correoElectronico>hola@startupgt.com</correoElectronico>
+      <listaInstancias>
+        <instancia id="6">
+          <idConfiguracion>1</idConfiguracion>
+          <nombre>Desarrollo MVP</nombre>
+          <fechaInicio>01/10/2024</fechaInicio>
+          <estado>Vigente</estado>
+          <fechaFinal></fechaFinal>
+        </instancia>
+        <instancia id="7">
+          <idConfiguracion>5</idConfiguracion>
+          <nombre>Landing Page</nombre>
+          <fechaInicio>15/09/2024</fechaInicio>
+          <estado>Vigente</estado>
+          <fechaFinal></fechaFinal>
+        </instancia>
+      </listaInstancias>
+    </cliente>
+    
+    <!-- Cliente 4 -->
+    <cliente nit="98765-K">
+      <nombre>Corporación Financiera Centroamericana</nombre>
+      <usuario>corpfinanciera</usuario>
+      <clave>secure789</clave>
+      <direccion>7a Avenida 7-70 Zona 9, Guatemala City</direccion>
+      <correoElectronico>soporte@corpfinanciera.com</correoElectronico>
+      <listaInstancias>
+        <instancia id="8">
+          <idConfiguracion>4</idConfiguracion>
+          <nombre>Servidor Transaccional</nombre>
+          <fechaInicio>01/07/2024</fechaInicio>
+          <estado>Vigente</estado>
+          <fechaFinal></fechaFinal>
+        </instancia>
+        <instancia id="9">
+          <idConfiguracion>3</idConfiguracion>
+          <nombre>Backup Database</nombre>
+          <fechaInicio>15/08/2024</fechaInicio>
+          <estado>Vigente</estado>
+          <fechaFinal></fechaFinal>
+        </instancia>
+        <instancia id="10">
+          <idConfiguracion>2</idConfiguracion>
+          <nombre>Desarrollo Financiero</nombre>
+          <fechaInicio>10/09/2024</fechaInicio>
+          <estado>Vigente</estado>
+          <fechaFinal></fechaFinal>
+        </instancia>
+      </listaInstancias>
+    </cliente>
+  </listaClientes>
 </archivoConfiguraciones>

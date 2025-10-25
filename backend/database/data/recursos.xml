@@ -1,11 +1,11 @@
 <?xml version='1.0' encoding='utf-8'?>
 <recursos>
   <recurso id="1">
-    <nombre>Núcleos CPU</nombre>
+    <nombre>Procesador Intel Xeon</nombre>
     <abreviatura>CPU</abreviatura>
-    <metrica>unidades</metrica>
+    <metrica>núcleos</metrica>
     <tipo>Hardware</tipo>
-    <valorXhora>1.2</valorXhora>
+    <valorXhora>2.5</valorXhora>
   </recurso>
   <recurso id="2">
     <nombre>Memoria RAM</nombre>
@@ -17,8 +17,57 @@
   <recurso id="3">
     <nombre>Almacenamiento SSD</nombre>
     <abreviatura>SSD</abreviatura>
-    <metrica>GB</metrica>
+    <metrica>GiB</metrica>
+    <tipo>Hardware</tipo>
+    <valorXhora>0.25</valorXhora>
+  </recurso>
+  <recurso id="4">
+    <nombre>GPU NVIDIA Tesla</nombre>
+    <abreviatura>GPU</abreviatura>
+    <metrica>unidades</metrica>
+    <tipo>Hardware</tipo>
+    <valorXhora>5.0</valorXhora>
+  </recurso>
+  <recurso id="5">
+    <nombre>Ancho de Banda</nombre>
+    <abreviatura>BW</abreviatura>
+    <metrica>Mbps</metrica>
     <tipo>Hardware</tipo>
     <valorXhora>0.1</valorXhora>
+  </recurso>
+  <recurso id="6">
+    <nombre>Windows Server 2022</nombre>
+    <abreviatura>WIN</abreviatura>
+    <metrica>licencias</metrica>
+    <tipo>Software</tipo>
+    <valorXhora>1.2</valorXhora>
+  </recurso>
+  <recurso id="7">
+    <nombre>Ubuntu Server</nombre>
+    <abreviatura>UBT</abreviatura>
+    <metrica>licencias</metrica>
+    <tipo>Software</tipo>
+    <valorXhora>0.5</valorXhora>
+  </recurso>
+  <recurso id="8">
+    <nombre>Microsoft SQL Server</nombre>
+    <abreviatura>SQL</abreviatura>
+    <metrica>instancias</metrica>
+    <tipo>Software</tipo>
+    <valorXhora>3.0</valorXhora>
+  </recurso>
+  <recurso id="9">
+    <nombre>Apache Web Server</nombre>
+    <abreviatura>APC</abreviatura>
+    <metrica>instancias</metrica>
+    <tipo>Software</tipo>
+    <valorXhora>0.8</valorXhora>
+  </recurso>
+  <recurso id="10">
+    <nombre>Docker Engine</nombre>
+    <abreviatura>DCK</abreviatura>
+    <metrica>contenedores</metrica>
+    <tipo>Software</tipo>
+    <valorXhora>0.3</valorXhora>
   </recurso>
 </recursos>

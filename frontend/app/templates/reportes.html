@@ -113,10 +113,42 @@
 <script>
     // Cargar estadísticas al iniciar
     function cargarEstadisticas() {
-        // Simular datos de estadísticas (en un sistema real harías una petición al backend)
-        document.getElementById('totalFacturas').textContent = '12';
-        document.getElementById('totalClientes').textContent = '8';
-        document.getElementById('totalIngresos').textContent = 'Q15,240.50';
+        // Cargar facturas para calcular ingresos
+        fetch('{% url "consultar_datos" %}?tipo=facturas')
+        .then(response => response.json())
+        .then(data => {
+            let totalFacturas = 0;
+            let totalIngresos = 0;
+            let totalClientes = 0;
+            
+            if (data.datos) {
+                totalFacturas = data.datos.length;
+                // Calcular ingresos totales
+                data.datos.forEach(factura => {
+                    totalIngresos += parseFloat(factura.montoTotal) || 0;
+                });
+            }
+            
+            // Cargar clientes para contar
+            fetch('{% url "consultar_datos" %}?tipo=clientes')
+            .then(response => response.json())
+            .then(clientesData => {
+                if (clientesData.datos) {
+                    totalClientes = clientesData.datos.length;
+                }
+                
+                // Actualizar la interfaz
+                document.getElementById('totalFacturas').textContent = totalFacturas;
+                document.getElementById('totalClientes').textContent = totalClientes;
+                document.getElementById('totalIngresos').textContent = 'Q' + totalIngresos.toFixed(2);
+            })
+            .catch(error => {
+                console.error('Error cargando clientes:', error);
+            });
+        })
+        .catch(error => {
+            console.error('Error cargando facturas:', error);
+        });
     }
 
     // Formulario de Reporte de Factura
