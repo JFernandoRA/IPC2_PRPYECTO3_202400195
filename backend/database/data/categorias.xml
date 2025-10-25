@@ -14,22 +14,6 @@
           <recurso id="3">50.0</recurso>
         </recursos>
       </configuracion>
-      <configuracion id="2">
-        <nombre>Configuracion de prueba</nombre>
-        <descripcion>prueba 1</descripcion>
-        <recursos>
-          <recurso id="1">2.0</recurso>
-          <recurso id="2">4.0</recurso>
-          <recurso id="3">100.0</recurso>
-        </recursos>
-      </configuracion>
-      <configuracion id="3">
-        <nombre>otra prueba</nombre>
-        <descripcion>prueba 2</descripcion>
-        <recursos>
-          <recurso id="1">8.0</recurso>
-        </recursos>
-      </configuracion>
     </configuraciones>
   </categoria>
 </categorias>
